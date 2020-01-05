@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using myrental.Models;
+using MyRental.Services.ItemServices;
 using Rental.DTOs.ItemDTOs;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -14,27 +15,18 @@ namespace MyRental.Controllers
     public class ItemController : Controller
     {
 
-        private MyRentalDbContext context;
+        private ItemService service;
 
         public ItemController()
         {
-            context = new MyRentalDbContext();
+            service = new ItemService();
         }
 
         // GET: api/values
         [HttpGet]
         public IEnumerable<ItemListDTO> Get()
         {
-            var items = context.items.Select(item => new ItemListDTO()
-            {
-                Title = item.Title,
-                Detail = item.Detail,
-                Price = item.Price,
-                PostTime = item.PostTime,
-                ExpireTime = item.ExpireTime
-                //TODO: add AuthorName field
-                //AuthorName = item.Author.userName
-            });
+            var items = service.getItemList();
             return items;
         }
 
@@ -42,18 +34,8 @@ namespace MyRental.Controllers
         [HttpGet("{id}")]
         public ItemListDTO Get(int id)
         {
-            var items = context.items.Where(i => i.ItemID == id)
-                .Select(item => new ItemListDTO()
-                {
-                    Title = item.Title,
-                    Detail = item.Detail,
-                    Price = item.Price,
-                    PostTime = item.PostTime,
-                    ExpireTime = item.ExpireTime
-                    //TODO: add AuthorName field
-                    //AuthorName = item.Author.userName
-                });
-            return items.Count() > 0 ? items.First() : null;
+            var item = service.getItemDetail(id);
+            return item;
         }
 
         // POST api/values

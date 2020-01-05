@@ -19,4 +19,9 @@
     <Compile Remove="WeatherForecast.cs" />
     <Compile Remove="Controllers\WeatherForecastController.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\Settings\" />
+    <Folder Include="Services\" />
+    <Folder Include="Services\ItemServices\" />
+  </ItemGroup>
 </Project>
