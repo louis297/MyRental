@@ -30,12 +30,6 @@ namespace MyRental
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            //services.AddDbContextPool<MyRentalDbContext>(options => options
-            //    // replace with your connection string
-            //    .UseMySql("Server=localhost;Database=Rental;user=root;password=sqL3345!", mySqlOptions => mySqlOptions
-            //        // replace with your Server Version and Type
-            //        .ServerVersion(new ServerVersion(new Version(8, 0, 18), ServerType.MySql))
-            //));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
