@@ -24,4 +24,16 @@
     <Folder Include="Services\" />
     <Folder Include="Services\ItemServices\" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Remove="Properties\launchSettings.json" />
+    <Content Remove="appsettings.json" />
+    <Content Remove="Properties\launchSettings.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Properties\launchSettings.json">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
 </Project>
