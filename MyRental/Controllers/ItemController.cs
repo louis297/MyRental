@@ -15,18 +15,18 @@ namespace MyRental.Controllers
     public class ItemController : Controller
     {
 
-        private ItemService service;
+        private IItemService _service;
 
-        public ItemController()
+        public ItemController(IItemService service)
         {
-            service = new ItemService();
+            _service = service;
         }
 
         // GET: api/values
         [HttpGet]
         public IEnumerable<ItemListDTO> Get()
         {
-            var items = service.getItemList();
+            var items = _service.GetItemList();
             return items;
         }
 
@@ -34,7 +34,7 @@ namespace MyRental.Controllers
         [HttpGet("{id}")]
         public ItemListDTO Get(int id)
         {
-            var item = service.getItemDetail(id);
+            var item = _service.GetItemDetail(id);
             return item;
         }
 

@@ -6,7 +6,7 @@ using Rental.DTOs.ItemDTOs;
 
 namespace MyRental.Services.ItemServices
 {
-    public class ItemService
+    public class ItemService : IItemService
     {
 
         private MyRentalDbContext context;
@@ -15,7 +15,7 @@ namespace MyRental.Services.ItemServices
             context = new MyRentalDbContext();
         }
 
-        public IEnumerable<ItemListDTO> getItemList()
+        public IEnumerable<ItemListDTO> GetItemList()
         {
             var items = context.items.Select(item => new ItemListDTO()
             {
@@ -31,7 +31,7 @@ namespace MyRental.Services.ItemServices
             return items;
         }
 
-        public ItemListDTO getItemDetail(int id)
+        public ItemListDTO GetItemDetail(int id)
         {
             var items = context.items.Where(i => i.ItemID == id)
                 .Select(item => new ItemListDTO()
