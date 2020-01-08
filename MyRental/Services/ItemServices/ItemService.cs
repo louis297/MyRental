@@ -19,7 +19,7 @@ namespace MyRental.Services.ItemServices
         {
             var items = context.items.Select(item => new ItemListDTO()
             {
-                Title = item.Title,
+                ItemName = item.ItemName,
                 Detail = item.Detail,
                 Price = item.Price,
                 PostTime = item.PostTime,
@@ -31,12 +31,12 @@ namespace MyRental.Services.ItemServices
             return items;
         }
 
-        public ItemListDTO GetItemDetail(int id)
+        public ItemListDTO GetItemDetailById(int id)
         {
             var items = context.items.Where(i => i.ItemID == id)
                 .Select(item => new ItemListDTO()
                 {
-                    Title = item.Title,
+                    ItemName = item.ItemName,
                     Detail = item.Detail,
                     Price = item.Price,
                     PostTime = item.PostTime,
@@ -45,6 +45,16 @@ namespace MyRental.Services.ItemServices
                     //AuthorName = item.Author.userName
                 });
             return items.Count() > 0 ? items.First() : null;
+        }
+
+        public void DeleteItemById(int id)
+        {
+
+        }
+
+        public void CreateItem(string value)
+        {
+
         }
     }
 }

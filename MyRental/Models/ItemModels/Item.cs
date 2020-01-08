@@ -13,7 +13,7 @@ namespace myrental.Models.ItemModels
         public int ItemID { get; set; }
         [Required]
         [StringLength(255)]
-        public string Title { get; set; }
+        public string ItemName { get; set; }
         [Required]
         [StringLength(1000)]
         public string Detail { get; set; }

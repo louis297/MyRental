@@ -7,8 +7,8 @@ namespace MyRental.Services.ItemServices
     public interface IItemService
     {
         public IEnumerable<ItemListDTO> GetItemList();
-        public ItemListDTO GetItemDetail(int id);
-        public ItemListDTO Get(int id);
-        public void Post(string value);
+        public ItemListDTO GetItemDetailById(int id);
+        public void CreateItem(string value);
+        public void DeleteItemById(int id);
     }
 }
