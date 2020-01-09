@@ -3,13 +3,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using myrental.Models.ItemModels;
+using MyRental.Models.ItemModels;
 
-namespace myrental.Models
+namespace MyRental.Models
 {
     public class MyRentalDbContext: DbContext
     {
         public DbSet<Item> items { get; set; }
+        public DbSet<ItemImage> itemImages { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -20,11 +21,19 @@ namespace myrental.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Item>()
+            .HasMany(i => i.itemImages)
+            .WithOne();
+
+            modelBuilder.Entity<ItemImage>()
+                .HasKey(i => new { i.ItemId, i.ImagePath });
+
+
             modelBuilder.Entity<Item>().HasData(
                 new Item
                 {
                     ItemID = 1,
-                    Title = "item1",
+                    ItemName = "item1",
                     Detail = "details1",
                     ExpireTime = DateTime.Parse("2020-06-01 00:00:00"),
                     Price = 200
@@ -32,7 +41,7 @@ namespace myrental.Models
                 new Item
                 {
                     ItemID = 2,
-                    Title = "item2",
+                    ItemName = "item2",
                     Detail = "details2",
                     ExpireTime = DateTime.Parse("2020-07-01 06:00:00"),
                     Price = 100

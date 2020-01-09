@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Rental.DTOs.ItemDTOs
+namespace MyRental.DTOs.ItemDTOs
 {
     public class ItemListDTO
     {
@@ -7,7 +7,7 @@ namespace Rental.DTOs.ItemDTOs
         //{
         //}
 
-        public string Title { get; set; }
+        public string ItemName { get; set; }
         public string Detail { get; set; }
         //TODO: Add AuthorName field after User authentication implemented
         //public string AuthorName { get; set; }

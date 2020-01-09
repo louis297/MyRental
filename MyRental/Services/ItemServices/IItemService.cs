@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Rental.DTOs.ItemDTOs;
+using MyRental.DTOs.ItemDTOs;
 
 namespace MyRental.Services.ItemServices
 {
@@ -8,7 +8,7 @@ namespace MyRental.Services.ItemServices
     {
         public IEnumerable<ItemListDTO> GetItemList();
         public ItemListDTO GetItemDetailById(int id);
-        public void CreateItem(string value);
+        public string CreateItem(ItemCreateDTO newItem);
         public void DeleteItemById(int id);
     }
 }

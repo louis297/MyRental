@@ -9,8 +9,8 @@ using MyRental.Models;
 namespace MyRental.Migrations
 {
     [DbContext(typeof(MyRentalDbContext))]
-    [Migration("20200108221624_change_item_column_name")]
-    partial class change_item_column_name
+    [Migration("20200108234002_add_ItemImage_model")]
+    partial class add_ItemImage_model
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,7 +19,7 @@ namespace MyRental.Migrations
                 .HasAnnotation("ProductVersion", "3.1.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("myrental.Models.ItemModels.Item", b =>
+            modelBuilder.Entity("MyRental.Models.ItemModels.Item", b =>
                 {
                     b.Property<int>("ItemID")
                         .ValueGeneratedOnAdd()
@@ -67,6 +67,28 @@ namespace MyRental.Migrations
                             PostTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Price = 100
                         });
+                });
+
+            modelBuilder.Entity("MyRental.Models.ItemModels.ItemImage", b =>
+                {
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImagePath")
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                    b.HasKey("ItemId", "ImagePath");
+
+                    b.ToTable("itemImages");
+                });
+
+            modelBuilder.Entity("MyRental.Models.ItemModels.ItemImage", b =>
+                {
+                    b.HasOne("MyRental.Models.ItemModels.Item", null)
+                        .WithMany("itemImages")
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

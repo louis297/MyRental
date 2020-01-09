@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace myrental.Models.ItemModels
+namespace MyRental.Models.ItemModels
 {
     public class Item
     {
@@ -23,6 +24,8 @@ namespace myrental.Models.ItemModels
         public DateTime ExpireTime { get; set; }
         [Required]
         public int Price { get; set; }
+        
+        public List<ItemImage> itemImages { get; set; }
 
         //TODO: Add User related fields
     }

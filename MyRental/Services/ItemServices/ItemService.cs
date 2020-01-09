@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using myrental.Models;
-using Rental.DTOs.ItemDTOs;
+using System.Text.Json;
+using MyRental.DTOs.ItemDTOs;
+using MyRental.Models;
+using MyRental.Models.ItemModels;
 
 namespace MyRental.Services.ItemServices
 {
@@ -52,9 +54,57 @@ namespace MyRental.Services.ItemServices
 
         }
 
-        public void CreateItem(string value)
+        public string CreateItem(ItemCreateDTO newItem)
         {
+            try
+            {
+                // validation
+                if(newItem.ItemName.Length > 250)
+                {
+                    return "{'result': 'failed', 'reason': 'Item name is too long'}";
+                }
+                if(newItem.Detail.Length > 999)
+                {
+                    return "{'result': 'failed', 'reason': 'Item detail is too long'}";
+                }
+                if(newItem.Price < 0)
+                {
+                    return "{'result': 'failed', 'reason': 'Price should not be negative'}";
+                }
+                if(newItem.ExpireTime < DateTime.Now)
+                {
+                    return "{'result': 'failed', 'reason': 'Expire time should not be in the past'}";
+                }
 
+                Item item = new Item
+                {
+                    ItemName = newItem.ItemName,
+                    Detail = newItem.Detail,
+                    Price = newItem.Price,
+                    ExpireTime = newItem.ExpireTime
+                };
+                context.items.Add(item);
+                context.SaveChanges();
+                //int itemId = context.items.Where(item)
+                //IList<ItemImage> imageUrls = new List<ItemImage>();
+                foreach (string imageUrl in newItem.ImageUrls)
+                {
+                    ItemImage itemImage = new ItemImage
+                    {
+                        ImagePath = imageUrl,
+                        ItemId = item.ItemID,
+                    };
+                    //imageUrls.Add(itemImage);
+                    context.itemImages.Add(itemImage);
+                }
+                context.SaveChanges();
+                return $"{{'result': success', 'entity': {JsonSerializer.Serialize(item)}}}";
+            }
+            catch
+            {
+                return "{'result': 'failed', 'reason': 'DB error'}";
+            }
+            
         }
     }
 }

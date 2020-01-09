@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using myrental.Models;
+using MyRental.DTOs.ItemDTOs;
 using MyRental.Services.ItemServices;
-using Rental.DTOs.ItemDTOs;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -34,14 +33,16 @@ namespace MyRental.Controllers
         [HttpGet("{id}")]
         public ItemListDTO Get(int id)
         {
-            var item = _service.GetItemDetail(id);
+            var item = _service.GetItemDetailById(id);
             return item;
         }
 
         // POST api/values
         [HttpPost]
-        public void Post([FromBody]string value)
+        public string Post(ItemCreateDTO model)
         {
+            var r = _service.CreateItem(model);
+            return r;
         }
 
         // PUT api/values/5
