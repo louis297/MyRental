@@ -37,6 +37,13 @@ namespace MyRental.Controllers
             return item;
         }
 
+        [HttpGet("archive/{id}")]
+        public string Archive(int id)
+        {
+            var r =_service.ItemArchive(id);
+            return r;
+        }
+
         // POST api/values
         [HttpPost]
         public string Post(ItemCreateDTO model)

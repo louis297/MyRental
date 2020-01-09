@@ -19,7 +19,9 @@ namespace MyRental.Services.ItemServices
 
         public IEnumerable<ItemListDTO> GetItemList()
         {
-            var items = context.items.Select(item => new ItemListDTO()
+            var items = context.items
+                .Where(item => item.Active)
+                .Select(item => new ItemListDTO()
             {
                 ItemName = item.ItemName,
                 Detail = item.Detail,
@@ -33,16 +35,17 @@ namespace MyRental.Services.ItemServices
             return items;
         }
 
-        public ItemListDTO GetItemDetailById(int id)
+        public ItemDetailDTO GetItemDetailById(int id)
         {
             var items = context.items.Where(i => i.ItemID == id)
-                .Select(item => new ItemListDTO()
+                .Select(item => new ItemDetailDTO()
                 {
                     ItemName = item.ItemName,
                     Detail = item.Detail,
                     Price = item.Price,
                     PostTime = item.PostTime,
-                    ExpireTime = item.ExpireTime
+                    ExpireTime = item.ExpireTime,
+                    Active = item.Active
                     //TODO: add AuthorName field
                     //AuthorName = item.Author.userName
                 });
@@ -52,6 +55,29 @@ namespace MyRental.Services.ItemServices
         public void DeleteItemById(int id)
         {
 
+        }
+
+        public string ItemArchive(int id)
+        {
+            try
+            {
+                var item = context.items
+                    .Where(i => i.ItemID == id)
+                    .FirstOrDefault();
+                if (item == null)
+                {
+                    return "{'result':'failed','reason':'Item not found'}";
+                }
+                else
+                {
+                    item.Active = false;
+                    context.SaveChanges();
+                    return "{'result':'success'}";
+                }
+            } catch
+            {
+                return "{'result':'failed','reason':'DB error'}";
+            }
         }
 
         public string CreateItem(ItemCreateDTO newItem)

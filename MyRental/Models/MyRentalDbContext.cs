@@ -36,7 +36,8 @@ namespace MyRental.Models
                     ItemName = "item1",
                     Detail = "details1",
                     ExpireTime = DateTime.Parse("2020-06-01 00:00:00"),
-                    Price = 200
+                    Price = 200,
+                    Active = true
                 },
                 new Item
                 {
@@ -44,7 +45,8 @@ namespace MyRental.Models
                     ItemName = "item2",
                     Detail = "details2",
                     ExpireTime = DateTime.Parse("2020-07-01 06:00:00"),
-                    Price = 100
+                    Price = 100,
+                    Active = true
                 }
             );
         }

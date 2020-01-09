@@ -24,7 +24,8 @@ namespace MyRental.Models.ItemModels
         public DateTime ExpireTime { get; set; }
         [Required]
         public int Price { get; set; }
-        
+        public bool Active { get; set; }
+
         public List<ItemImage> itemImages { get; set; }
 
         //TODO: Add User related fields
