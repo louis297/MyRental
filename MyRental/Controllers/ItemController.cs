@@ -31,7 +31,7 @@ namespace MyRental.Controllers
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public ItemListDTO Get(int id)
+        public ItemDetailDTO Get(int id)
         {
             var item = _service.GetItemDetailById(id);
             return item;

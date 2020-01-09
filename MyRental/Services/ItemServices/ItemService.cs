@@ -35,6 +35,27 @@ namespace MyRental.Services.ItemServices
             return items;
         }
 
+        public IEnumerable<ItemListDTO> GetItemListByAmount(int start, int amount)
+        {
+            var items = context.items
+                .Where(item => item.Active)
+                .Where(i => i.ItemID >= start)
+                .OrderBy(i => i.ItemID)
+                .Take(amount)
+                .Select(item => new ItemListDTO()
+                {
+                    ItemName = item.ItemName,
+                    Detail = item.Detail,
+                    Price = item.Price,
+                    PostTime = item.PostTime,
+                    ExpireTime = item.ExpireTime
+                    //TODO: add AuthorName field
+                    //AuthorName = item.Author.userName
+                });
+
+            return items;
+        }
+
         public ItemDetailDTO GetItemDetailById(int id)
         {
             var items = context.items.Where(i => i.ItemID == id)
@@ -84,22 +105,10 @@ namespace MyRental.Services.ItemServices
         {
             try
             {
-                // validation
-                if(newItem.ItemName.Length > 250)
+                var v = ItemCreateDTOValidation(newItem);
+                if (!v.Equals("success"))
                 {
-                    return "{'result': 'failed', 'reason': 'Item name is too long'}";
-                }
-                if(newItem.Detail.Length > 999)
-                {
-                    return "{'result': 'failed', 'reason': 'Item detail is too long'}";
-                }
-                if(newItem.Price < 0)
-                {
-                    return "{'result': 'failed', 'reason': 'Price should not be negative'}";
-                }
-                if(newItem.ExpireTime < DateTime.Now)
-                {
-                    return "{'result': 'failed', 'reason': 'Expire time should not be in the past'}";
+                    return $"{{'result':'failed','reason':'{v}'}}";
                 }
 
                 Item item = new Item
@@ -124,13 +133,81 @@ namespace MyRental.Services.ItemServices
                     context.itemImages.Add(itemImage);
                 }
                 context.SaveChanges();
-                return $"{{'result': success', 'entity': {JsonSerializer.Serialize(item)}}}";
+                return $"{{'result':'success','entity':{JsonSerializer.Serialize(item)}}}";
             }
             catch
             {
-                return "{'result': 'failed', 'reason': 'DB error'}";
+                return "{'result':'failed','reason':'DB error'}";
             }
             
+        }
+
+        public string UpdateItem(int itemId, ItemCreateDTO newItem)
+        {
+            var v = ItemCreateDTOValidation(newItem);
+            if (!v.Equals("success"))
+            {
+                return $"{{'result':'failed','reason':'{v}'}}";
+            }
+
+            var item = context.items.Where(i => i.ItemID == itemId)
+                .FirstOrDefault();
+            if(item == null)
+            {
+                return "{'result':'failed','reason':'Item not found'}";
+            }
+            try
+            {
+                item.Detail = newItem.Detail;
+                item.ItemName = newItem.ItemName;
+                item.ExpireTime = newItem.ExpireTime;
+                item.Price = newItem.Price;
+                // remove previous image links
+                foreach(var itemImage in item.itemImages)
+                {
+                    context.itemImages.Remove(itemImage);
+                }
+                // TODO: Remove previous images on disk
+
+                // add new image links
+                foreach (string imageUrl in newItem.ImageUrls)
+                {
+                    ItemImage itemImage = new ItemImage
+                    {
+                        ImagePath = imageUrl,
+                        ItemId = item.ItemID,
+                    };
+                    context.itemImages.Add(itemImage);
+                }
+
+                context.SaveChanges();
+                return $"{{'result':'success','entity':{JsonSerializer.Serialize(item)}}}";
+            } catch
+            {
+                return "{'result':'failed','reason':'DB error'}";
+            }
+        }
+
+        private string ItemCreateDTOValidation(ItemCreateDTO item)
+        {
+            if (item.ItemName.Length > 250)
+            {
+                return "Item name is too long";
+            }
+            if (item.Detail.Length > 999)
+            {
+                return "Item detail is too long";
+            }
+            if (item.Price < 0)
+            {
+                return "Price should not be negative";
+            }
+            if (item.ExpireTime < DateTime.Now)
+            {
+                return "Expire time should not be in the past";
+            }
+
+            return "success";
         }
     }
 }
