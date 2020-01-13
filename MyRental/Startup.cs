@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -30,7 +32,11 @@ namespace MyRental
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            
             services.AddScoped<IItemService, ItemService>();
+
+            // user individual authentication
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
