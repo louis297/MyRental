@@ -15,13 +15,11 @@ namespace MyRental.Models
         public DbSet<Item> items { get; set; }
         public DbSet<ItemImage> itemImages { get; set; }
 
-        
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 
             //TODO: move connect string to config file
-            optionsBuilder.UseMySql("Server=localhost;Database=Rental;user=root;password=sqL3345!");
+            optionsBuilder.UseMySql(CustomSettings.ConnectionString);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

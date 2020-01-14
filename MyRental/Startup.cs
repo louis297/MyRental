@@ -41,7 +41,8 @@ namespace MyRental
                 .AddEntityFrameworkStores<UserDbContext>();
             services.AddIdentityServer()
                 .AddApiAuthorization<ApplicationUser, UserDbContext>();
-            
+
+            SetupDB();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,6 +63,12 @@ namespace MyRental
             {
                 endpoints.MapControllers();
             });
+        }
+
+        // Setup Database connection string
+        private void SetupDB()
+        {
+            CustomSettings.ConnectionString = $"Server={Configuration["DB:dev:server"]};Database={Configuration["DB:dev:database"]};user={Configuration["DB:dev:user"]};password={Configuration["DB:dev:password"]}";
         }
     }
 }

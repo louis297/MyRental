@@ -19,7 +19,7 @@ namespace MyRental.Models.UserModel
         {
 
             //TODO: move connect string to config file
-            optionsBuilder.UseMySql("Server=localhost;Database=Rental;user=root;password=sqL3345!");
+            optionsBuilder.UseMySql(CustomSettings.ConnectionString);
         }
     }
 }
