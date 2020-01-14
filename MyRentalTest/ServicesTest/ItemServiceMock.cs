@@ -85,5 +85,25 @@ namespace MyRental.Tests.ControllerTest
             });
             return items;
         }
+
+        public IEnumerable<ItemListDTO> GetItemListByAmount(int start, int amount)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string ItemArchive(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string UpdateItem(int itemId, ItemCreateDTO newItem)
+        {
+            throw new NotImplementedException();
+        }
+
+        ItemDetailDTO IItemService.GetItemDetailById(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

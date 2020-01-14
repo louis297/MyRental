@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -13,6 +12,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MyRental.Models;
+using MyRental.Models.UserModel;
 using MyRental.Services.ItemServices;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Pomelo.EntityFrameworkCore.MySql.Storage;
@@ -36,6 +37,10 @@ namespace MyRental
             services.AddScoped<IItemService, ItemService>();
 
             // user individual authentication
+            services.AddDefaultIdentity<ApplicationUser>()
+                .AddEntityFrameworkStores<UserDbContext>();
+            services.AddIdentityServer()
+                .AddApiAuthorization<ApplicationUser, UserDbContext>();
             
         }
 

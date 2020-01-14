@@ -1,9 +1,12 @@
 ﻿using System;
+using IdentityServer4.EntityFramework.Options;
+using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using MyRental.Models.ItemModels;
+using MyRental.Models.UserModel;
 
 namespace MyRental.Models
 {
@@ -11,6 +14,8 @@ namespace MyRental.Models
     {
         public DbSet<Item> items { get; set; }
         public DbSet<ItemImage> itemImages { get; set; }
+
+        
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
