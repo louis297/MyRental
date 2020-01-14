@@ -18,22 +18,4 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.ApiAuthorization.IdentityServer" Version="3.1.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="WeatherForecast.cs" />
-    <Compile Remove="Controllers\WeatherForecastController.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\Settings\" />
-    <Folder Include="Services\" />
-    <Folder Include="Services\ItemServices\" />
-    <Folder Include="Models\UserModel\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Remove="Properties\launchSettings.json" />
-    <Content Remove="appsettings.json" />
-    <Content Remove="Properties\launchSettings.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="**/*" />
-  </ItemGroup>
 </Project>
