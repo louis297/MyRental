@@ -22,15 +22,16 @@ namespace MyRental.Services.ItemServices
             var items = context.items
                 .Where(item => item.Active)
                 .Select(item => new ItemListDTO()
-            {
-                ItemName = item.ItemName,
-                Detail = item.Detail,
-                Price = item.Price,
-                PostTime = item.PostTime,
-                ExpireTime = item.ExpireTime
-                //TODO: add AuthorName field
-                //AuthorName = item.Author.userName
-            });
+                {
+                    ItemID = item.ItemID,
+                    ItemName = item.ItemName,
+                    Detail = item.Detail,
+                    Price = item.Price,
+                    PostTime = item.PostTime.ToString("dd/MM/yyyy HH:mm"),
+                    ExpireTime = item.ExpireTime.ToString("dd/MM/yyyy HH:mm")
+                    //TODO: add AuthorName field
+                    //AuthorName = item.Author.userName
+                });
 
             return items;
         }
@@ -44,11 +45,12 @@ namespace MyRental.Services.ItemServices
                 .Take(amount)
                 .Select(item => new ItemListDTO()
                 {
+                    ItemID = item.ItemID,
                     ItemName = item.ItemName,
                     Detail = item.Detail,
                     Price = item.Price,
-                    PostTime = item.PostTime,
-                    ExpireTime = item.ExpireTime
+                    PostTime = item.PostTime.ToString("dd/MM/yyyy HH:mm"),
+                    ExpireTime = item.ExpireTime.ToString("dd/MM/yyyy HH:mm")
                     //TODO: add AuthorName field
                     //AuthorName = item.Author.userName
                 });

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,8 +42,7 @@ namespace MyRental
                 .AddEntityFrameworkStores<UserDbContext>();
             services.AddIdentityServer()
                 .AddApiAuthorization<ApplicationUser, UserDbContext>();
-
-            SetupDB();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,24 +51,48 @@ namespace MyRental
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseDatabaseErrorPage();
             }
+            SetupDB(env.IsDevelopment());
+
 
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
+            //app.UseSpaStaticFiles();
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
+            //app.UseIdentityServer();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "clientapp";
+                if (env.IsDevelopment())
+                {
+                    spa.UseReactDevelopmentServer(npmScript: "start");
+                }
+            });
         }
 
         // Setup Database connection string
-        private void SetupDB()
+        private void SetupDB(bool isDev)
         {
-            CustomSettings.ConnectionString = $"Server={Configuration["DB:dev:server"]};Database={Configuration["DB:dev:database"]};user={Configuration["DB:dev:user"]};password={Configuration["DB:dev:password"]}";
+            if (isDev)
+            {
+                CustomSettings.ConnectionString = $"Server={Configuration["DB:dev:server"]};Database={Configuration["DB:dev:database"]};user={Configuration["DB:dev:user"]};password={Configuration["DB:dev:password"]}";
+            }
+            else
+            {
+                //TODO: updata connectionstring for prod env
+                CustomSettings.ConnectionString = "???";
+            }
         }
     }
 }
