@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MyRental.DTOs.ItemDTOs;
+using MyRental.Models.ResponseModels.ItemResponseModels;
 using MyRental.Services.ItemServices;
 
 namespace MyRental.Controllers
@@ -36,7 +37,7 @@ namespace MyRental.Controllers
         }
 
         [HttpGet("archive/{id}")]
-        public string Archive(int id)
+        public ItemAddUpdateResponseModel Archive(int id)
         {
             var r =_service.ItemArchive(id);
             return r;
@@ -44,7 +45,7 @@ namespace MyRental.Controllers
 
         // POST api/values
         [HttpPost]
-        public string Post(ItemCreateDTO model)
+        public ItemAddUpdateResponseModel Post(ItemCreateDTO model)
         {
             var r = _service.CreateItem(model);
             return r;

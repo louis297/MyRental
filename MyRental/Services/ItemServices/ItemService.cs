@@ -5,6 +5,7 @@ using System.Text.Json;
 using MyRental.DTOs.ItemDTOs;
 using MyRental.Models;
 using MyRental.Models.ItemModels;
+using MyRental.Models.ResponseModels.ItemResponseModels;
 
 namespace MyRental.Services.ItemServices
 {
@@ -27,6 +28,7 @@ namespace MyRental.Services.ItemServices
                     ItemName = item.ItemName,
                     Detail = item.Detail,
                     Price = item.Price,
+                    //TODO: deal with date time format
                     PostTime = item.PostTime.ToString("dd/MM/yyyy HH:mm"),
                     ExpireTime = item.ExpireTime.ToString("dd/MM/yyyy HH:mm")
                     //TODO: add AuthorName field
@@ -49,6 +51,7 @@ namespace MyRental.Services.ItemServices
                     ItemName = item.ItemName,
                     Detail = item.Detail,
                     Price = item.Price,
+                    //TODO: deal with date time format
                     PostTime = item.PostTime.ToString("dd/MM/yyyy HH:mm"),
                     ExpireTime = item.ExpireTime.ToString("dd/MM/yyyy HH:mm")
                     //TODO: add AuthorName field
@@ -80,7 +83,7 @@ namespace MyRental.Services.ItemServices
 
         }
 
-        public string ItemArchive(int id)
+        public ItemAddUpdateResponseModel ItemArchive(int id)
         {
             try
             {
@@ -89,28 +92,46 @@ namespace MyRental.Services.ItemServices
                     .FirstOrDefault();
                 if (item == null)
                 {
-                    return "{'result':'failed','reason':'Item not found'}";
+                    return new ItemAddUpdateResponseModel {
+                    isSuccess = false,
+                    Message = "Item not found",
+                    Item = null};
                 }
                 else
                 {
                     item.Active = false;
                     context.SaveChanges();
-                    return "{'result':'success'}";
+                    return new ItemAddUpdateResponseModel
+                    {
+                        isSuccess = true,
+                        Message = "",
+                        Item = null
+                    };
                 }
             } catch
             {
-                return "{'result':'failed','reason':'DB error'}";
+                return new ItemAddUpdateResponseModel
+                {
+                    isSuccess = false,
+                    Message = "DB error",
+                    Item = null
+                };
             }
         }
 
-        public string CreateItem(ItemCreateDTO newItem)
+        public ItemAddUpdateResponseModel CreateItem(ItemCreateDTO newItem)
         {
             try
             {
                 var v = ItemCreateDTOValidation(newItem);
                 if (!v.Equals("success"))
                 {
-                    return $"{{'result':'failed','reason':'{v}'}}";
+                    return new ItemAddUpdateResponseModel
+                    {
+                        isSuccess = false,
+                        Message = v,
+                        Item = null
+                    };
                 }
 
                 Item item = new Item
@@ -135,28 +156,50 @@ namespace MyRental.Services.ItemServices
                     context.itemImages.Add(itemImage);
                 }
                 context.SaveChanges();
-                return $"{{'result':'success','entity':{JsonSerializer.Serialize(item)}}}";
+
+                var itemAdded = GetItemDetailById(item.ItemID);
+                return new ItemAddUpdateResponseModel
+                {
+                    isSuccess = true,
+                    Message = "",
+                    Item = itemAdded
+                };
             }
             catch
             {
-                return "{'result':'failed','reason':'DB error'}";
+                return new ItemAddUpdateResponseModel
+                {
+                    isSuccess = false,
+                    Message = "DB error",
+                    Item = null
+                };
             }
             
         }
 
-        public string UpdateItem(int itemId, ItemCreateDTO newItem)
+        public ItemAddUpdateResponseModel UpdateItem(int itemId, ItemCreateDTO newItem)
         {
             var v = ItemCreateDTOValidation(newItem);
             if (!v.Equals("success"))
             {
-                return $"{{'result':'failed','reason':'{v}'}}";
+                return new ItemAddUpdateResponseModel
+                {
+                    isSuccess = false,
+                    Message = v,
+                    Item = null
+                };
             }
 
             var item = context.items.Where(i => i.ItemID == itemId)
                 .FirstOrDefault();
             if(item == null)
             {
-                return "{'result':'failed','reason':'Item not found'}";
+                return new ItemAddUpdateResponseModel
+                {
+                    isSuccess = false,
+                    Message = "Item not found",
+                    Item = null
+                };
             }
             try
             {
@@ -183,10 +226,21 @@ namespace MyRental.Services.ItemServices
                 }
 
                 context.SaveChanges();
-                return $"{{'result':'success','entity':{JsonSerializer.Serialize(item)}}}";
+                var itemUpdated = GetItemDetailById(item.ItemID);
+                return new ItemAddUpdateResponseModel
+                {
+                    isSuccess = true,
+                    Message = "",
+                    Item = itemUpdated
+                };
             } catch
             {
-                return "{'result':'failed','reason':'DB error'}";
+                return new ItemAddUpdateResponseModel
+                {
+                    isSuccess = false,
+                    Message = "DB error",
+                    Item = null
+                };
             }
         }
 
