@@ -17,8 +17,6 @@ namespace MyRental.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-
-            //TODO: move connect string to config file
             optionsBuilder.UseMySql(CustomSettings.ConnectionString);
         }
 
