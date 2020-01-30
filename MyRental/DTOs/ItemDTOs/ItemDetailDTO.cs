@@ -1,4 +1,6 @@
 ﻿using System;
+using MyRental.Models.ItemModels;
+
 namespace MyRental.DTOs.ItemDTOs
 {
     public class ItemDetailDTO
@@ -11,5 +13,22 @@ namespace MyRental.DTOs.ItemDTOs
         public DateTime ExpireTime { get; set; }
         public int Price { get; set; }
         public bool Active { get; set; }
+
+        public ItemDetailDTO(Item item)
+        {
+            ItemName = item.ItemName;
+            Detail = item.Detail;
+            Price = item.Price;
+            PostTime = item.PostTime;
+            ExpireTime = item.ExpireTime;
+            Active = item.Active;
+            //TODO: add AuthorName field
+            //AuthorName = item.Author.userName
+        }
+
+        public ItemDetailDTO()
+        {
+
+        }
     }
 }
