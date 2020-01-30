@@ -21,7 +21,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Remove="$(Frontend)**" />
-    <None Remove="$(Frontend)**" />
     <None Include="$(Frontend)**" Exclude="$(Frontend)node_modules\**" />
   </ItemGroup>
   <ItemGroup>

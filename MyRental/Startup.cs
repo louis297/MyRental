@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -42,6 +43,14 @@ namespace MyRental
                 .AddEntityFrameworkStores<UserDbContext>();
             services.AddIdentityServer()
                 .AddApiAuthorization<ApplicationUser, UserDbContext>();
+
+            services.AddAuthentication()
+                .AddIdentityServerJwt();
+
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "clientapp/build";
+            });
             
         }
 
@@ -58,17 +67,21 @@ namespace MyRental
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            //app.UseSpaStaticFiles();
+            app.UseSpaStaticFiles();
 
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
-            //app.UseIdentityServer();
+            app.UseIdentityServer();
 
             app.UseEndpoints(endpoints =>
             {
+                //endpoints.MapControllerRoute(
+                //    name: "default",
+                //    pattern: "api/{controller}/{action}/{id?}");
                 endpoints.MapControllers();
+                
             });
 
             app.UseSpa(spa =>
