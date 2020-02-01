@@ -133,6 +133,7 @@ export class AuthorizeService {
     if (subscriptionIndex.length !== 1){
       throw new Error(`Found an invalid number of subscriptions ${subscriptionIndex.length}`);
     }
+    this._callbacks = this._callbacks.splice(subscriptionIndex[0].index, 1);
   }
 
   notifySubscribers() {

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using MyRental.DTOs.ItemDTOs;
 using MyRental.Models.ItemModels;
-using MyRental.Models.ResponseModels.ItemResponseModels;
 
 namespace MyRental.Services.ItemServices
 {

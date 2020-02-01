@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using MyRental.DTOs.ItemDTOs;
 using MyRental.Models;
 using MyRental.Models.ItemModels;
-using MyRental.Models.ResponseModels.ItemResponseModels;
 
 namespace MyRental.Services.ItemServices
 {

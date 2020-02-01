@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Text.Json;
 using MyRental.DTOs.ItemDTOs;
 using MyRental.Services.ItemServices;
@@ -48,7 +47,7 @@ namespace MyRentalTest.ControllerTest
             var r = service.CreateItem(m);
             Assert.Equal("{'result': 'success'}", r);
 
-            m.ItemName = string.Concat(Enumerable.Repeat("abc", 100)); ;
+            m.ItemName = "aaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdfaaaaaaaaasdfasdfasdasdfasdf";
             r = service.CreateItem(m);
             Assert.Equal("{'result': 'failed', 'reason': 'Item name is too long'}", r);
 
