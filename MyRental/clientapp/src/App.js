@@ -5,6 +5,9 @@ import './App.css';
 import { Layout } from './components/Layout';
 import Home from './components/Home';
 import Mylist from './components/Mylist';
+import { ApplicationPaths } from './components/api-auth/Constants';
+import ApiAuthorizationRoutes from './components/api-auth/ApiAuthorizationRoutes'
+import AuthorizeRoute from './components/api-auth/AuthorizeRoute'
 
 export default class App extends Component {
   static displayName = App.name;
@@ -12,10 +15,10 @@ export default class App extends Component {
   render() {
     return (
       <Layout>
-        <Switch>
-          <Route exact path='/' component={Home} />
-          <Route path='/mylist' component={Mylist} />
-        </Switch>
+        
+        <Route exact path='/' component={Home} />
+        <AuthorizeRoute path='/mylist' component={Mylist} />
+        <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
       </Layout> 
     )
   }

@@ -5,26 +5,26 @@ import { Logout } from './Logout'
 import { ApplicationPaths, LogoutActions, LoginActions } from './Constants'
 
 export default class ApiAuthorizationRoutes extends Component {
-  render() {
-    return (
-      <Fragment>
-        <Route path={ApplicationPaths.Login} render={() => loginAction(LoginActions.Login)} />
-        <Route path={ApplicationPaths.LoginFailed} render={() => loginAction(LoginActions.LoginFailed)} />
-        <Route path={ApplicationPaths.LoginCallback} render={() => loginAction(LoginActions.LoginCallback)} />
-        <Route path={ApplicationPaths.Profile} render={() => loginAction(LoginActions.Profile)} />
-        <Route path={ApplicationPaths.Register} render={() => loginAction(LoginActions.Register)} />
-        <Route path={ApplicationPaths.Logout} render={() => loginAction(LogoutActions.Logout)} />
-        <Route path={ApplicationPaths.LogoutCallback} render={() => loginAction(LogoutActions.LogoutCallback)} />
-        <Route path={ApplicationPaths.LoggedOut} render={() => loginAction(LogoutActions.LoggedOut)} />
-      </Fragment>
-    )
-  }
+
+    render() {
+        return (
+            <Fragment>
+                <Route path={ApplicationPaths.Login} render={() => loginAction(LoginActions.Login)} />
+                <Route path={ApplicationPaths.LoginFailed} render={() => loginAction(LoginActions.LoginFailed)} />
+                <Route path={ApplicationPaths.LoginCallback} render={() => loginAction(LoginActions.LoginCallback)} />
+                <Route path={ApplicationPaths.Profile} render={() => loginAction(LoginActions.Profile)} />
+                <Route path={ApplicationPaths.Register} render={() => loginAction(LoginActions.Register)} />
+                <Route path={ApplicationPaths.LogOut} render={() => logoutAction(LogoutActions.Logout)} />
+                <Route path={ApplicationPaths.LogOutCallback} render={() => logoutAction(LogoutActions.LogoutCallback)} />
+                <Route path={ApplicationPaths.LoggedOut} render={() => logoutAction(LogoutActions.LoggedOut)} />
+            </Fragment>);
+    }
 }
 
-function loginAction(name){
-  return (<Login action={name}></Login>)
+function loginAction(name) {
+    return (<Login action={name}></Login>);
 }
 
-function logoutAction(name){
-  return (<Logout action={name}></Logout>)
+function logoutAction(name) {
+    return (<Logout action={name}></Logout>);
 }

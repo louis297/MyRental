@@ -34,7 +34,8 @@ namespace MyRental
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllersWithViews();
+            services.AddRazorPages();
             
             services.AddScoped<IItemService, ItemService>();
 
@@ -81,6 +82,7 @@ namespace MyRental
                     name: "default",
                     pattern: "{controller}/{action}/{id?}");
                 //endpoints.MapControllers();
+                endpoints.MapRazorPages();
                 
             });
 
