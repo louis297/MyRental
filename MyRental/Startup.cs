@@ -34,15 +34,20 @@ namespace MyRental
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            CustomSettings.ConnectionString = $"Server={Configuration["DB:dev:server"]};Database={Configuration["DB:dev:database"]};user={Configuration["DB:dev:user"]};password={Configuration["DB:dev:password"]}";
+
+            services.AddDbContext<MyRentalDbContext>(options =>
+                options.UseMySql(CustomSettings.ConnectionString));
+            services.AddControllersWithViews();
+            services.AddRazorPages();
             
             services.AddScoped<IItemService, ItemService>();
 
             // user individual authentication
             services.AddDefaultIdentity<ApplicationUser>()
-                .AddEntityFrameworkStores<UserDbContext>();
+                .AddEntityFrameworkStores<MyRentalDbContext>();
             services.AddIdentityServer()
-                .AddApiAuthorization<ApplicationUser, UserDbContext>();
+                .AddApiAuthorization<ApplicationUser, MyRentalDbContext>();
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
@@ -57,12 +62,12 @@ namespace MyRental
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            SetupDB(env.IsDevelopment());
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
             }
-            SetupDB(env.IsDevelopment());
 
 
             app.UseHttpsRedirection();
@@ -81,6 +86,7 @@ namespace MyRental
                     name: "default",
                     pattern: "{controller}/{action}/{id?}");
                 //endpoints.MapControllers();
+                endpoints.MapRazorPages();
                 
             });
 
@@ -104,7 +110,7 @@ namespace MyRental
             else
             {
                 //TODO: updata connectionstring for prod env
-                CustomSettings.ConnectionString = "???";
+                CustomSettings.ConnectionString = $"Server={Configuration["DB:dev:server"]};Database={Configuration["DB:dev:database"]};user={Configuration["DB:dev:user"]};password={Configuration["DB:dev:password"]}";
             }
         }
     }

@@ -1,7 +1,7 @@
 ﻿using System;
 namespace MyRental.MyRentalExceptions
 {
-    public class IdentityException: Exception
+    public class UserCheckException: Exception
     {
         
     }

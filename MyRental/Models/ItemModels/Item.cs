@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
+using MyRental.Models.UserModel;
 
 namespace MyRental.Models.ItemModels
 {
@@ -25,9 +27,12 @@ namespace MyRental.Models.ItemModels
         [Required]
         public int Price { get; set; }
         public bool Active { get; set; }
+        [Required]
+        public DbSet<ItemImage> Images { get; set; }
 
-        public List<ItemImage> itemImages { get; set; }
-
-        //TODO: Add User related fields
+        [Required]
+        public ApplicationUser Author { get; set; }
+        [Required]
+        public string AuthorID { get; set; }
     }
 }

@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using MyRental.DTOs.ItemDTOs;
 using MyRental.Models;
 using MyRental.Models.ItemModels;
+using MyRental.Models.UserModel;
+using MyRental.MyRentalExceptions;
 
 namespace MyRental.Services.ItemServices
 {
@@ -11,9 +16,9 @@ namespace MyRental.Services.ItemServices
     {
 
         private MyRentalDbContext context;
-        public ItemService()
+        public ItemService(MyRentalDbContext c)
         {
-            context = new MyRentalDbContext();
+            context = c;
         }
 
         public IEnumerable<Item> GetItemList()
@@ -63,29 +68,32 @@ namespace MyRental.Services.ItemServices
             }
         }
 
-        public Item CreateItem(ItemCreateDTO newItem)
+        public Item CreateItem(ItemCreateDTO newItem, ApplicationUser user)
         {
+            var userId = user.Id;
             Item item = new Item
             {
                 ItemName = newItem.ItemName,
                 Detail = newItem.Detail,
                 Price = newItem.Price,
-                ExpireTime = newItem.ExpireTime
+                ExpireTime = newItem.ExpireTime,
+                AuthorID = user.Id
             };
-            context.items.Add(item);
-            context.SaveChanges();
-            //int itemId = context.items.Where(item)
-            //IList<ItemImage> imageUrls = new List<ItemImage>();
-            foreach (string imageUrl in newItem.ImageUrls)
+            IList<ItemImage> images = new List<ItemImage>();
+            foreach(int imageID in newItem.Images)
             {
-                ItemImage itemImage = new ItemImage
+                var image = context.itemImages.Where(i => i.ImageId == imageID).First();
+                if(image.UserID != userId)
                 {
-                    ImagePath = imageUrl,
-                    ItemId = item.ItemID,
-                };
-                //imageUrls.Add(itemImage);
-                context.itemImages.Add(itemImage);
+                    throw (new UserCheckException());
+                }
+                images.Add(image);
             }
+            foreach(var image in images)
+            {
+                item.Images.Add(image);
+            }
+            context.items.Add(item);
             context.SaveChanges();
 
             var itemAdded = GetItemDetailById(item.ItemID);
@@ -93,7 +101,20 @@ namespace MyRental.Services.ItemServices
 
         }
 
-        public Item UpdateItem(int itemId, ItemCreateDTO newItem)
+        public int SaveFile(byte[] fileBytes, string contentType, ApplicationUser user)
+        {
+            ItemImage image = new ItemImage
+            {
+                ImageContent = fileBytes,
+                ImageType = contentType,
+                UserID = user.Id
+            };
+            context.itemImages.Add(image);
+            context.SaveChanges();
+            return image.ImageId;
+        }
+
+        public Item UpdateItem(int itemId, ItemCreateDTO newItem, ApplicationUser user)
         {
 
             var item = context.items.Where(i => i.ItemID == itemId)
@@ -102,28 +123,32 @@ namespace MyRental.Services.ItemServices
             {
                 return null;
             }
+            if (!item.AuthorID.Equals(user.Id))
+            {
+                throw new UserCheckException();
+            }
 
             item.Detail = newItem.Detail;
             item.ItemName = newItem.ItemName;
             item.ExpireTime = newItem.ExpireTime;
             item.Price = newItem.Price;
             // remove previous image links
-            foreach(var itemImage in item.itemImages)
-            {
-                context.itemImages.Remove(itemImage);
-            }
-            // TODO: Remove previous images on disk
+            //foreach(var itemImage in item.itemImages)
+            //{
+            //    context.itemImages.Remove(itemImage);
+            //}
+            //// TODO: Remove previous images on disk
 
-            // add new image links
-            foreach (string imageUrl in newItem.ImageUrls)
-            {
-                ItemImage itemImage = new ItemImage
-                {
-                    ImagePath = imageUrl,
-                    ItemId = item.ItemID,
-                };
-                context.itemImages.Add(itemImage);
-            }
+            //// add new image links
+            //foreach (string imageUrl in newItem.Images)
+            //{
+            //    ItemImage itemImage = new ItemImage
+            //    {
+            //        ImagePath = imageUrl,
+            //        ItemId = item.ItemID,
+            //    };
+            //    context.itemImages.Add(itemImage);
+            //}
 
             context.SaveChanges();
             var itemUpdated = GetItemDetailById(item.ItemID);

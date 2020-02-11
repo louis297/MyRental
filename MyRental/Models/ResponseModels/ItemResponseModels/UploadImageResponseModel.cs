@@ -1,7 +1,7 @@
 ﻿using System;
 namespace MyRental.Models.ResponseModels.ItemResponseModels
 {
-    public class UploadImageResponseModel
+    public class UploadImageResponseModel: BaseResponseModel
     {
         public UploadImageResponseModel()
         {

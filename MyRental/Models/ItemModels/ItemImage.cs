@@ -1,14 +1,21 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using MyRental.Models.UserModel;
 
 namespace MyRental.Models.ItemModels
 {
     public class ItemImage
     {
-        public int ItemId { get; set; }
-        public string ImagePath { get; set; }
-        //[ForeignKey("Item")]
-        //public Item ItemFK { get; set; }
+        [Key]
+        public int ImageId { get; set; }
+        [Required]
+        public byte[] ImageContent { get; set; }
+        [Required]
+        public string ImageType { get; set; }
+        [Required]
+        public string UserID { get; set; }
+
+        public ApplicationUser User { get; set; }
     }
 }

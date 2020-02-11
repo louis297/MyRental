@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MyRental.DTOs.ItemDTOs;
 using MyRental.Models.ResponseModels.ItemResponseModels;
+using MyRental.Models.UserModel;
+using MyRental.MyRentalExceptions;
 using MyRental.Services.ItemServices;
+using MyRental.Utils;
 
 namespace MyRental.Controllers
 {
@@ -14,10 +20,12 @@ namespace MyRental.Controllers
     {
 
         private IItemService _service;
+        private UserManager<ApplicationUser> _userManager;
 
-        public ItemController(IItemService service)
+        public ItemController(IItemService service, UserManager<ApplicationUser> userManager)
         {
             _service = service;
+            _userManager = userManager;
         }
 
         // GET: api/values
@@ -35,6 +43,10 @@ namespace MyRental.Controllers
         {
             var item = _service.GetItemDetailById(id);
             var DTO = new ItemDetailDTO(item);
+            foreach(var image in item.Images)
+            {
+                DTO.Images.Add(new ItemImageResponseModel(image));
+            }
             return DTO;
         }
 
@@ -77,11 +89,12 @@ namespace MyRental.Controllers
         }
 
         // POST api/values
-        [HttpPost]
-        public ItemAddUpdateResponseModel Post(ItemCreateDTO model)
+        [HttpPost("upload")]
+        public async Task<ItemAddUpdateResponseModel> PostAsync(ItemCreateDTO model)
         {
             try
             {
+                var user = await _userManager.GetUserAsync(HttpContext.User);
                 var v = ItemCreateDTOValidation(model);
                 if (!v.Equals("success"))
                 {
@@ -93,7 +106,7 @@ namespace MyRental.Controllers
                     };
                 }
 
-                var item = _service.CreateItem(model);
+                var item = _service.CreateItem(model, user);
                 
                 var DTO = new ItemAddUpdateResponseModel
                 {
@@ -114,12 +127,55 @@ namespace MyRental.Controllers
             }
         }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public ItemAddUpdateResponseModel Put(int id, ItemCreateDTO model)
+        [HttpPost("uploadimage")]
+        public async Task<UploadImageResponseModel> UploadFileAsync([FromForm]IFormFile body)
         {
             try
             {
+                var user = await _userManager.GetUserAsync(HttpContext.User);
+                byte[] fileBytes;
+                using (var memoryStream = new MemoryStream())
+                {
+                    await body.CopyToAsync(memoryStream);
+                    fileBytes = memoryStream.ToArray();
+                }
+                var contentType = GetImageFormat(fileBytes);
+                if(contentType.Equals(Util.ImageFormat.unknown))
+                {
+                    return new UploadImageResponseModel
+                    {
+                        isSuccess = false,
+                        Message = "File type error"
+                    };
+                }
+                var imageId = _service.SaveFile(fileBytes, contentType.ToString(), user);
+                return new UploadImageResponseModel {
+                    isSuccess = true,
+                    Message = imageId.ToString()
+                };
+            } catch
+            {
+                return new UploadImageResponseModel
+                {
+                    isSuccess = false,
+                    Message = "Write file failed"
+                };
+            }
+            
+        }
+
+        private object GetImageFormat(byte[] fileBytes)
+        {
+            throw new NotImplementedException();
+        }
+
+        // PUT api/values/5
+        [HttpPut("{id}")]
+        public async Task<ItemAddUpdateResponseModel> PutAsync(int id, ItemCreateDTO model)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(HttpContext.User);
                 var v = ItemCreateDTOValidation(model);
                 if (!v.Equals("success"))
                 {
@@ -131,7 +187,7 @@ namespace MyRental.Controllers
                     };
                 }
 
-                var item = _service.UpdateItem(id, model);
+                var item = _service.UpdateItem(id, model, user);
 
                 var DTO = new ItemAddUpdateResponseModel
                 {
@@ -140,6 +196,15 @@ namespace MyRental.Controllers
                     Item = new ItemDetailDTO(item)
                 };
                 return DTO;
+            }
+            catch(UserCheckException)
+            {
+                return new ItemAddUpdateResponseModel
+                {
+                    isSuccess = false,
+                    Message = "Not allowed user",
+                    Item = null
+                };
             }
             catch
             {

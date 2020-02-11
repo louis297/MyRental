@@ -20,7 +20,7 @@
     "MyRental": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/item",
+      "launchUrl": "/",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

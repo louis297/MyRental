@@ -9,6 +9,6 @@ namespace MyRental.DTOs.ItemDTOs
         public string Detail { get; set; }
         public DateTime ExpireTime { get; set; }
         public int Price { get; set; }
-        public List<string> ImageUrls { get; set; }
+        public List<int> Images { get; set; }
     }
 }
