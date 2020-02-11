@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace MyRental.Migrations.UserDb
+namespace MyRental.Migrations
 {
-    public partial class add_Default_User_table : Migration
+    public partial class add_user_to_item : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -187,6 +187,56 @@ namespace MyRental.Migrations.UserDb
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "items",
+                columns: table => new
+                {
+                    ItemID = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    ItemName = table.Column<string>(maxLength: 255, nullable: false),
+                    Detail = table.Column<string>(maxLength: 1000, nullable: false),
+                    PostTime = table.Column<DateTime>(nullable: false),
+                    ExpireTime = table.Column<DateTime>(nullable: false),
+                    Price = table.Column<int>(nullable: false),
+                    Active = table.Column<bool>(nullable: false),
+                    AuthorID = table.Column<string>(nullable: true),
+                    ApplicationUserId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_items", x => x.ItemID);
+                    table.ForeignKey(
+                        name: "FK_items_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_items_AspNetUsers_AuthorID",
+                        column: x => x.AuthorID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "itemImages",
+                columns: table => new
+                {
+                    ItemId = table.Column<int>(nullable: false),
+                    ImagePath = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_itemImages", x => new { x.ItemId, x.ImagePath });
+                    table.ForeignKey(
+                        name: "FK_itemImages_items_ItemId",
+                        column: x => x.ItemId,
+                        principalTable: "items",
+                        principalColumn: "ItemID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -236,6 +286,16 @@ namespace MyRental.Migrations.UserDb
                 column: "Expiration");
 
             migrationBuilder.CreateIndex(
+                name: "IX_items_ApplicationUserId",
+                table: "items",
+                column: "ApplicationUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_items_AuthorID",
+                table: "items",
+                column: "AuthorID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PersistedGrants_Expiration",
                 table: "PersistedGrants",
                 column: "Expiration");
@@ -267,10 +327,16 @@ namespace MyRental.Migrations.UserDb
                 name: "DeviceCodes");
 
             migrationBuilder.DropTable(
+                name: "itemImages");
+
+            migrationBuilder.DropTable(
                 name: "PersistedGrants");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "items");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

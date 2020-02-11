@@ -2,19 +2,21 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using MyRental.Models.UserModel;
+using MyRental.Models;
 
-namespace MyRental.Migrations.UserDb
+namespace MyRental.Migrations
 {
-    [DbContext(typeof(UserDbContext))]
-    partial class UserDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(MyRentalDbContext))]
+    [Migration("20200211124253_redesign_itemimage")]
+    partial class redesign_itemimage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.0")
+                .HasAnnotation("ProductVersion", "3.1.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("IdentityServer4.EntityFramework.Entities.DeviceFlowCodes", b =>
@@ -231,6 +233,80 @@ namespace MyRental.Migrations.UserDb
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("MyRental.Models.ItemModels.Item", b =>
+                {
+                    b.Property<int>("ItemID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("AuthorID")
+                        .IsRequired()
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("Detail")
+                        .IsRequired()
+                        .HasColumnType("varchar(1000) CHARACTER SET utf8mb4")
+                        .HasMaxLength(1000);
+
+                    b.Property<DateTime>("ExpireTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("ItemName")
+                        .IsRequired()
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4")
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("PostTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
+
+                    b.HasKey("ItemID");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("AuthorID");
+
+                    b.ToTable("items");
+                });
+
+            modelBuilder.Entity("MyRental.Models.ItemModels.ItemImage", b =>
+                {
+                    b.Property<int>("ImageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("ImageContent")
+                        .IsRequired()
+                        .HasColumnType("longblob");
+
+                    b.Property<string>("ImageType")
+                        .IsRequired()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<int?>("ItemID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                    b.HasKey("ImageId");
+
+                    b.HasIndex("ItemID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("itemImages");
+                });
+
             modelBuilder.Entity("MyRental.Models.UserModel.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -342,6 +418,32 @@ namespace MyRental.Migrations.UserDb
                     b.HasOne("MyRental.Models.UserModel.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyRental.Models.ItemModels.Item", b =>
+                {
+                    b.HasOne("MyRental.Models.UserModel.ApplicationUser", null)
+                        .WithMany("Student")
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.HasOne("MyRental.Models.UserModel.ApplicationUser", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyRental.Models.ItemModels.ItemImage", b =>
+                {
+                    b.HasOne("MyRental.Models.ItemModels.Item", null)
+                        .WithMany("Images")
+                        .HasForeignKey("ItemID");
+
+                    b.HasOne("MyRental.Models.UserModel.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
