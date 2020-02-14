@@ -128,7 +128,9 @@ namespace MyRental.Controllers
         }
 
         [HttpPost("uploadimage")]
-        public async Task<UploadImageResponseModel> UploadFileAsync([FromForm]IFormFile body)
+        // The argument variable name 'body' should be same from the frontend
+        // Frontend should use 'FormData' to append ('body', '<content>')
+        public async Task<UploadImageResponseModel> UploadFileAsync([FromForm(Name ="body")]IFormFile body)
         {
             try
             {
@@ -139,7 +141,7 @@ namespace MyRental.Controllers
                     await body.CopyToAsync(memoryStream);
                     fileBytes = memoryStream.ToArray();
                 }
-                var contentType = GetImageFormat(fileBytes);
+                var contentType = Util.GetImageFormat(fileBytes);
                 if(contentType.Equals(Util.ImageFormat.unknown))
                 {
                     return new UploadImageResponseModel
@@ -153,8 +155,9 @@ namespace MyRental.Controllers
                     isSuccess = true,
                     Message = imageId.ToString()
                 };
-            } catch
+            } catch (Exception e)
             {
+                Console.WriteLine(e.Message);
                 return new UploadImageResponseModel
                 {
                     isSuccess = false,
@@ -162,11 +165,6 @@ namespace MyRental.Controllers
                 };
             }
             
-        }
-
-        private object GetImageFormat(byte[] fileBytes)
-        {
-            throw new NotImplementedException();
         }
 
         // PUT api/values/5

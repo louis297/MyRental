@@ -41,8 +41,10 @@ export default class AddItem extends Component {
       return;
     }
     this.state.uploading = true;
-    post("/api/item/uploadimage", event.target.files[0], { 
-      'content-type': 'multipart/form-data'
+    const formData = new FormData();
+    formData.append('body', event.target.files[0]);
+    post("/api/item/uploadimage", formData, { 
+      headers: {'content-type': 'multipart/form-data'}
     })
     .then(response => {
       this.setState({uploading: false});
@@ -98,20 +100,20 @@ export default class AddItem extends Component {
   }
   render() {
     let filelist = <div></div>;
-    if(this.state.filenames != []){
+    if(this.state.uploadedFilenames !== null && this.state.uploadedFilenames.length != 0){
       filelist = <ul>
-        {this.state.filenames.map((value, index)=>{
+        {this.state.uploadedFilenames.map((value, index)=>{
           return <li key={value.id}>{value.filename}</li>
         })}
       </ul>
     }
     let uploadErrorComponent = <div></div>;
     if(this.state.uploadError){
-      uploadErrorComponent = <p className="text-danger">this.state.uploadErrorMsg</p>
+      uploadErrorComponent = <p className="text-danger">{this.state.uploadErrorMsg}</p>
     }
     let submitErrorComponent = <div></div>;
     if(this.state.submitError){
-      submitErrorComponent = <p className="text-danger">this.state.submitErrorMsg</p>
+      submitErrorComponent = <p className="text-danger">{this.state.submitErrorMsg}</p>
     }
     return (
       <div>

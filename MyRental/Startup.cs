@@ -44,7 +44,9 @@ namespace MyRental
             services.AddScoped<IItemService, ItemService>();
 
             // user individual authentication
-            services.AddDefaultIdentity<ApplicationUser>()
+            services.AddDefaultIdentity<ApplicationUser>(options => {
+                options.ClaimsIdentity.UserIdClaimType = "UserID";
+            })
                 .AddEntityFrameworkStores<MyRentalDbContext>();
             services.AddIdentityServer()
                 .AddApiAuthorization<ApplicationUser, MyRentalDbContext>();
