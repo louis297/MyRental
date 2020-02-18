@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
-import { post } from 'axios';
+import axios, { post } from 'axios';
+import authService from './api-auth/AuthorizeService'
+import { Redirect } from 'react-router';
 
 export default class AddItem extends Component {
   static displayName = AddItem.name;
@@ -8,7 +10,7 @@ export default class AddItem extends Component {
     super(props);
     this.state = {
       itemName: '',
-      itemDetail: '',
+      detail: '',
       price: 0,
       expireTime: '',
       images: [],
@@ -36,16 +38,26 @@ export default class AddItem extends Component {
   }
 
   async imageUploadHandler(event){
+    // VERY important, without persist event will be re-use and set to null in async function
+    event.persist();
     if(this.state.uploading){
       alert('Another file is uploading, please wait for a while');
       return;
     }
     this.state.uploading = true;
+    const token = await authService.getAccessToken();
     const formData = new FormData();
+
     formData.append('body', event.target.files[0]);
-    post("/api/item/uploadimage", formData, { 
-      headers: {'content-type': 'multipart/form-data'}
-    })
+    post(
+      "/api/item/uploadimage", formData, 
+      {
+        headers: {
+        'content-type': 'multipart/form-data',
+        'Authorization': `Bearer ${token}`
+        }
+      }
+    )
     .then(response => {
       this.setState({uploading: false});
       console.log(response.data);
@@ -69,34 +81,59 @@ export default class AddItem extends Component {
     });
   }
 
-  onClickHandler = (event) => {
-    // const data = new FormData()
-    // for(var x = 0; x<this.state.selectedFile.length; x++) {
-    //     data.append('file', this.state.selectedFile[x])
-    // }
-    // this.setState({images: data});
+  onClickHandler = async (event) => {
+    // VERY important, without persist event will be re-use and set to null in async function
+    event.persist();
+    event.preventDefault();
     if(this.state.uploading){
-      event.preventDefault();
       alert('Image is uploading, please wait for a while');
       return;
     }
+    const token = await authService.getAccessToken();
+    // const formData = new FormData();
+    // formData.append('itemName', this.state.itemName);
+    // formData.append('detail', this.state.detail);
+    // formData.append('price', this.state.price);
+    // formData.append('expireTime', this.state.expireTime);
+    // formData.append('images', this.state.itemName);
     var data = {
       itemName: this.state.itemName,
-      itemDetail: this.state.itemDetail,
-      price: this.state.price,
+      detail: this.state.detail,
       expireTime: this.state.expireTime,
-      images: this.state,images
+      price: parseInt(this.state.price),
+      images: this.state.images
+      // images: [1,]
     };
-    post("/api/item/upload", data, { 
-       'content-type': 'application/json'
+    axios({
+      url:"/api/item/upload", 
+      method: 'post',
+      // data: {itemName:'some str', price: '333', expireTime:"2020-02-29T03:04", images:[1,], detail: 'some detail'}, 
+      data: data,
+      headers: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
     })
-    .then(res => {
-      if(response.data.isSuccess === 'true'){
-        window.location.href('/mylist');
-    } else {
-
-    }
+    .then(response => {
+      if(response.data.isSuccess === true){
+        window.location.href='/mylist';
+      } else {
+        console.log(response.data.message);
+      }
     })
+    // axios({
+    //   url:"/api/item/testupload", 
+    //   method: 'post',
+    //   data: {itemName:'some str', price: 333, expireTime:"2020-02-29T03:04", images:[1,]}, 
+    //   headers: {
+    //     'content-type': 'application/json',
+    //     'Authorization': `Bearer ${token}`
+    //   }
+    // })
+    // .then(response => {
+    //   console.log(response.data.message);
+    //   event.preventDefault();
+    // })
   }
   render() {
     let filelist = <div></div>;
@@ -125,8 +162,8 @@ export default class AddItem extends Component {
               onChange={this.onChangeHandler} />
           </div>
           <div className="form-group">
-            <label htmlFor="itemDetail">Item details:</label>
-            <textarea key='itemDetail' cols="80" rows="10" className="form-control" id="itemDetail" name="itemDetail" value={this.state.itemDetail} 
+            <label htmlFor="detail">Item details:</label>
+            <textarea key='detail' cols="80" rows="10" className="form-control" id="detail" name="detail" value={this.state.detail} 
               onChange={this.onChangeHandler} />
           </div>
           <div className="form-group">

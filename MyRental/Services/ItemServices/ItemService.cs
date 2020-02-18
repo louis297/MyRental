@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MyRental.DTOs.ItemDTOs;
 using MyRental.Models;
 using MyRental.Models.ItemModels;
@@ -21,23 +22,43 @@ namespace MyRental.Services.ItemServices
             context = c;
         }
 
-        public IEnumerable<Item> GetItemList()
+        private IEnumerable<Item> CheckUser(IQueryable<Item> items, ApplicationUser user)
         {
-            var items = context.items
-                .Where(item => item.Active);
-
+            if(user == null)
+            {
+                return items;
+            } else
+            {
+                return items.Where(item => item.AuthorID.Equals(user.Id));
+            }
+        }
+        public IEnumerable<Item> GetItemList(ApplicationUser user = null)
+        {
+            var rawItems = context.items
+            .Where(item => item.Active);
+            var items = CheckUser(rawItems, user);
             return items;
         }
 
-        public IEnumerable<Item> GetItemListByAmount(int start, int amount)
+        public IEnumerable<Item> GetItemListByAmount(int start, int amount, ApplicationUser user=null)
         {
-            var items = context.items
+            var rawItems = context.items
                 .Where(item => item.Active)
                 .Where(i => i.ItemID >= start)
-                .OrderBy(i => i.ItemID)
+                .OrderBy(i => i.ItemID);
+            var items = CheckUser(rawItems, user)
                 .Take(amount);
-
             return items;
+        }
+
+
+        public int GetItemAmount(ApplicationUser user = null)
+        {
+            var rawItems = context.items
+                .Where(item => item.Active);
+            var count = CheckUser(rawItems, user)
+                .Count();
+            return count;
         }
 
         public Item GetItemDetailById(int id)
@@ -46,12 +67,12 @@ namespace MyRental.Services.ItemServices
             return items.Count() > 0 ? items.First() : null;
         }
 
-        public void DeleteItemById(int id)
+        public void DeleteItemById(int id, ApplicationUser user)
         {
 
         }
 
-        public Item ItemArchive(int id)
+        public Item ItemArchive(int id, ApplicationUser user)
         {
             var item = context.items
                 .Where(i => i.ItemID == id)
@@ -60,6 +81,9 @@ namespace MyRental.Services.ItemServices
             {
                 return null;
             }
+            else if(!item.AuthorID.Equals(user.Id)) {
+                throw new UserCheckException();
+            } 
             else
             {
                 item.Active = false;
@@ -79,7 +103,7 @@ namespace MyRental.Services.ItemServices
                 ExpireTime = newItem.ExpireTime,
                 AuthorID = user.Id
             };
-            IList<ItemImage> images = new List<ItemImage>();
+            item.Images = new List<ItemImage>();
             foreach(int imageID in newItem.Images)
             {
                 var image = context.itemImages.Where(i => i.ImageId == imageID).First();
@@ -87,12 +111,9 @@ namespace MyRental.Services.ItemServices
                 {
                     throw (new UserCheckException());
                 }
-                images.Add(image);
-            }
-            foreach(var image in images)
-            {
                 item.Images.Add(image);
             }
+
             context.items.Add(item);
             context.SaveChanges();
 
@@ -116,7 +137,7 @@ namespace MyRental.Services.ItemServices
 
         public Item UpdateItem(int itemId, ItemCreateDTO newItem, ApplicationUser user)
         {
-
+            var userId = user.Id;
             var item = context.items.Where(i => i.ItemID == itemId)
                 .FirstOrDefault();
             if(item == null)
@@ -132,23 +153,16 @@ namespace MyRental.Services.ItemServices
             item.ItemName = newItem.ItemName;
             item.ExpireTime = newItem.ExpireTime;
             item.Price = newItem.Price;
-            // remove previous image links
-            //foreach(var itemImage in item.itemImages)
-            //{
-            //    context.itemImages.Remove(itemImage);
-            //}
-            //// TODO: Remove previous images on disk
-
-            //// add new image links
-            //foreach (string imageUrl in newItem.Images)
-            //{
-            //    ItemImage itemImage = new ItemImage
-            //    {
-            //        ImagePath = imageUrl,
-            //        ItemId = item.ItemID,
-            //    };
-            //    context.itemImages.Add(itemImage);
-            //}
+            item.Images = new List<ItemImage>();
+            foreach (int imageID in newItem.Images)
+            {
+                var image = context.itemImages.Where(i => i.ImageId == imageID).First();
+                if (image.UserID != userId)
+                {
+                    throw (new UserCheckException());
+                }
+                item.Images.Add(image);
+            }
 
             context.SaveChanges();
             var itemUpdated = GetItemDetailById(item.ItemID);

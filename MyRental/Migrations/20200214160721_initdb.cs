@@ -1,10 +1,9 @@
 ﻿using System;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MyRental.Migrations
 {
-    public partial class add_user_to_item : Migration
+    public partial class initdb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -86,7 +85,7 @@ namespace MyRental.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     RoleId = table.Column<string>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)
@@ -107,7 +106,7 @@ namespace MyRental.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)
@@ -192,14 +191,14 @@ namespace MyRental.Migrations
                 columns: table => new
                 {
                     ItemID = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     ItemName = table.Column<string>(maxLength: 255, nullable: false),
                     Detail = table.Column<string>(maxLength: 1000, nullable: false),
                     PostTime = table.Column<DateTime>(nullable: false),
                     ExpireTime = table.Column<DateTime>(nullable: false),
                     Price = table.Column<int>(nullable: false),
                     Active = table.Column<bool>(nullable: false),
-                    AuthorID = table.Column<string>(nullable: true),
+                    AuthorID = table.Column<string>(nullable: false),
                     ApplicationUserId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -216,24 +215,34 @@ namespace MyRental.Migrations
                         column: x => x.AuthorID,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "itemImages",
                 columns: table => new
                 {
-                    ItemId = table.Column<int>(nullable: false),
-                    ImagePath = table.Column<string>(nullable: false)
+                    ImageId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ImageContent = table.Column<byte[]>(nullable: false),
+                    ImageType = table.Column<string>(nullable: false),
+                    UserID = table.Column<string>(nullable: false),
+                    ItemID = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_itemImages", x => new { x.ItemId, x.ImagePath });
+                    table.PrimaryKey("PK_itemImages", x => x.ImageId);
                     table.ForeignKey(
-                        name: "FK_itemImages_items_ItemId",
-                        column: x => x.ItemId,
+                        name: "FK_itemImages_items_ItemID",
+                        column: x => x.ItemID,
                         principalTable: "items",
                         principalColumn: "ItemID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_itemImages_AspNetUsers_UserID",
+                        column: x => x.UserID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -246,7 +255,8 @@ namespace MyRental.Migrations
                 name: "RoleNameIndex",
                 table: "AspNetRoles",
                 column: "NormalizedName",
-                unique: true);
+                unique: true,
+                filter: "[NormalizedName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
@@ -272,7 +282,8 @@ namespace MyRental.Migrations
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
-                unique: true);
+                unique: true,
+                filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DeviceCodes_DeviceCode",
@@ -284,6 +295,16 @@ namespace MyRental.Migrations
                 name: "IX_DeviceCodes_Expiration",
                 table: "DeviceCodes",
                 column: "Expiration");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_itemImages_ItemID",
+                table: "itemImages",
+                column: "ItemID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_itemImages_UserID",
+                table: "itemImages",
+                column: "UserID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_items_ApplicationUserId",

@@ -46,6 +46,13 @@ namespace MyRental.Models
                 .HasOne(i => i.User)
                 .WithMany();
 
+            modelBuilder.Entity<Item>()
+                .Property(i => i.PostTime)
+                .HasDefaultValueSql("getdate()");
+
+            modelBuilder.Entity<Item>()
+                .Property(i => i.Active)
+                .HasDefaultValue(1);
 
             //modelBuilder.Entity<Item>().HasData(
             //    new Item

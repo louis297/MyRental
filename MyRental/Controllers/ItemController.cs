@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -51,12 +52,13 @@ namespace MyRental.Controllers
         }
 
         [HttpGet("archive/{id}")]
-        public ItemAddUpdateResponseModel Archive(int id)
+        public async Task<ItemAddUpdateResponseModel> ArchiveAsync([FromRoute]int id)
         {
             
             try
             {
-                var item = _service.ItemArchive(id);
+                var user = await _userManager.GetUserAsync(HttpContext.User);
+                var item = _service.ItemArchive(id, user);
                 if (item == null)
                 {
                     return new ItemAddUpdateResponseModel
@@ -88,9 +90,24 @@ namespace MyRental.Controllers
             }
         }
 
+        //public class TestModel
+        //{
+        //    public string ItemName { get; set; }
+        //    public int Price { get; set; }
+        //    public DateTime ExpireTime { get; set; }
+        //    public List<int> Images { get; set; }
+        //}
+        //[HttpPost("testupload")]
+        //public async Task<string> TestPostAsync([FromBody]TestModel model)
+        //{
+        //    var user = await _userManager.GetUserAsync(HttpContext.User);
+        //    Console.WriteLine(model);
+        //    return "success";
+        //}
+
         // POST api/values
         [HttpPost("upload")]
-        public async Task<ItemAddUpdateResponseModel> PostAsync(ItemCreateDTO model)
+        public async Task<ItemAddUpdateResponseModel> PostAsync([FromBody]ItemCreateDTO model)
         {
             try
             {
@@ -127,6 +144,7 @@ namespace MyRental.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost("uploadimage")]
         // The argument variable name 'body' should be same from the frontend
         // Frontend should use 'FormData' to append ('body', '<content>')
@@ -169,7 +187,7 @@ namespace MyRental.Controllers
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public async Task<ItemAddUpdateResponseModel> PutAsync(int id, ItemCreateDTO model)
+        public async Task<ItemAddUpdateResponseModel> PutAsync([FromRoute]int id, [FromBody]ItemCreateDTO model)
         {
             try
             {

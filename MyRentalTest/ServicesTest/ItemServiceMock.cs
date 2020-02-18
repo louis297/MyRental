@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using MyRental.DTOs.ItemDTOs;
 using MyRental.Models.ItemModels;
+using MyRental.Models.UserModel;
 using MyRental.Services.ItemServices;
 
 namespace MyRental.Tests.ControllerTest
@@ -41,6 +42,11 @@ namespace MyRental.Tests.ControllerTest
             throw new NotImplementedException();
         }
 
+        public Item CreateItem(ItemCreateDTO newItem, ApplicationUser user)
+        {
+            throw new NotImplementedException();
+        }
+
         public void DeleteItemById(int id)
         {
             throw new NotImplementedException();
@@ -54,7 +60,7 @@ namespace MyRental.Tests.ControllerTest
                 {
                     ItemName = "item1",
                     Detail = "details1",
-                    ExpireTime = DateTime.Parse("2020-06-01 00:00:00"),
+                    ExpireTime = "2020-06-01 00:00:00",
                     Price = 200
                 };
                 return item;
@@ -73,14 +79,14 @@ namespace MyRental.Tests.ControllerTest
             {
                 ItemName = "item1",
                 Detail = "details1",
-                ExpireTime = DateTime.Parse("2020-06-01 00:00:00"),
+                ExpireTime = "2020-06-01 00:00:00",
                 Price = 200
             });
             items.Add(new ItemListDTO
             {
                 ItemName = "item2",
                 Detail = "details2",
-                ExpireTime = DateTime.Parse("2020-07-01 06:00:00"),
+                ExpireTime = "2020-07-01 06:00:00",
                 Price = 100
             });
             return items;
@@ -96,12 +102,38 @@ namespace MyRental.Tests.ControllerTest
             throw new NotImplementedException();
         }
 
+        public int SaveFile(byte[] fileBytes, string contentType, ApplicationUser user)
+        {
+            throw new NotImplementedException();
+        }
+
         public string UpdateItem(int itemId, ItemCreateDTO newItem)
         {
             throw new NotImplementedException();
         }
 
-        ItemDetailDTO IItemService.GetItemDetailById(int id)
+        public Item UpdateItem(int itemId, ItemCreateDTO newItem, ApplicationUser user)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        Item IItemService.GetItemDetailById(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<Item> IItemService.GetItemList()
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<Item> IItemService.GetItemListByAmount(int start, int amount)
+        {
+            throw new NotImplementedException();
+        }
+
+        Item IItemService.ItemArchive(int id)
         {
             throw new NotImplementedException();
         }

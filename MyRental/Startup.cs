@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -17,8 +18,6 @@ using Microsoft.Extensions.Logging;
 using MyRental.Models;
 using MyRental.Models.UserModel;
 using MyRental.Services.ItemServices;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
-using Pomelo.EntityFrameworkCore.MySql.Storage;
 
 namespace MyRental
 {
@@ -34,10 +33,10 @@ namespace MyRental
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            CustomSettings.ConnectionString = $"Server={Configuration["DB:dev:server"]};Database={Configuration["DB:dev:database"]};user={Configuration["DB:dev:user"]};password={Configuration["DB:dev:password"]}";
+            CustomSettings.ConnectionString = $"Server=(localdb)\\mssqllocaldb;Database=aspnet-myrental;Trusted_Connection=True;MultipleActiveResultSets=true";
 
             services.AddDbContext<MyRentalDbContext>(options =>
-                options.UseMySql(CustomSettings.ConnectionString));
+                options.UseSqlServer(CustomSettings.ConnectionString));
             services.AddControllersWithViews();
             services.AddRazorPages();
             
@@ -45,14 +44,15 @@ namespace MyRental
 
             // user individual authentication
             services.AddDefaultIdentity<ApplicationUser>(options => {
-                options.ClaimsIdentity.UserIdClaimType = "UserID";
             })
                 .AddEntityFrameworkStores<MyRentalDbContext>();
+
             services.AddIdentityServer()
                 .AddApiAuthorization<ApplicationUser, MyRentalDbContext>();
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
+            JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
             services.AddSpaStaticFiles(configuration =>
             {
@@ -107,7 +107,8 @@ namespace MyRental
         {
             if (isDev)
             {
-                CustomSettings.ConnectionString = $"Server={Configuration["DB:dev:server"]};Database={Configuration["DB:dev:database"]};user={Configuration["DB:dev:user"]};password={Configuration["DB:dev:password"]}";
+                CustomSettings.ConnectionString = $"Server=(localdb)\\mssqllocaldb;Database=aspnet-myrental;Trusted_Connection=True;MultipleActiveResultSets=true";
+                    //$"Server={Configuration["DB:dev:server"]};Database={Configuration["DB:dev:database"]};user={Configuration["DB:dev:user"]};password={Configuration["DB:dev:password"]}";
             }
             else
             {
