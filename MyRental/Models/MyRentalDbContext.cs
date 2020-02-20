@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using MyRental.Models.ItemModels;
+using MyRental.Models.MessageModels;
 using MyRental.Models.UserModel;
 
 namespace MyRental.Models
@@ -16,6 +17,8 @@ namespace MyRental.Models
     {
         public DbSet<Item> items { get; set; }
         public DbSet<ItemImage> itemImages { get; set; }
+        public DbSet<ItemLike> itemLikes { get; set; }
+        public DbSet<MyRentalMessage> MyProperty { get; set; }
 
 
         public MyRentalDbContext(
@@ -34,25 +37,11 @@ namespace MyRental.Models
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Item>()
-                .HasOne(i => i.Author)
-                .WithMany();
+            modelBuilder.ApplyConfiguration(new ItemConfiguration());
+            modelBuilder.ApplyConfiguration(new ItemLikeConfiguration());
+            modelBuilder.ApplyConfiguration(new ItemImageConfiguration());
+            modelBuilder.ApplyConfiguration(new MyRentalMessageConfiguration());
 
-            modelBuilder.Entity<Item>()
-                .HasMany(i => i.Images)
-                .WithOne();
-
-            modelBuilder.Entity<ItemImage>()
-                .HasOne(i => i.User)
-                .WithMany();
-
-            modelBuilder.Entity<Item>()
-                .Property(i => i.PostTime)
-                .HasDefaultValueSql("getdate()");
-
-            modelBuilder.Entity<Item>()
-                .Property(i => i.Active)
-                .HasDefaultValue(1);
 
             //modelBuilder.Entity<Item>().HasData(
             //    new Item

@@ -29,7 +29,7 @@ namespace MyRental.Models.ItemModels
         public ICollection<ItemImage> Images { get; set; }
 
         [Required]
-        public ApplicationUser Author { get; set; }
+        public virtual ApplicationUser Author { get; set; }
         [Required]
         public string AuthorID { get; set; }
     }
