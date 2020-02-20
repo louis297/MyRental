@@ -2,8 +2,8 @@ import React, { Component } from 'react'
 import axios from 'axios'
 import authService from './api-auth/AuthorizeService'
 
-export default class Mylist extends Component {
-  static displayName = Mylist.name;
+export default class MyArchiveList extends Component {
+  static displayName = MyArchiveList.name;
 
   constructor(props){
     super(props);
@@ -14,7 +14,6 @@ export default class Mylist extends Component {
     }
     this.renderItemList = this.renderItemList.bind(this);
     this.toggleArchive = this.toggleArchive.bind(this);
-    this.getItemList = this.getItemList.bind(this);
   }
 
   componentDidMount(){
@@ -22,13 +21,9 @@ export default class Mylist extends Component {
   }
 
   async getItemList(start, amount) {
-    // const response = await fetch(`api/item/mylist?start=${start}&amount=${amount}`);
-    // const data = await response.json();
-    // this.setState({ items: data, loading: false })
     const token = await authService.getAccessToken();
-
     axios({
-      url: `/api/item/mylist?start=${start}&amount=${amount}`,
+      url: `/api/item/myarchivedlist?start=${start}&amount=${amount}`,
       headers: {
       'Authorization': `Bearer ${token}`
       }
@@ -41,7 +36,7 @@ export default class Mylist extends Component {
   async toggleArchive(itemID){
     const token = await authService.getAccessToken();
     if(this.state.archiving === true) {
-      alert('Item is archiving, please wait for a while...');
+      alert('Item is reactivating, please wait for a while...');
       return;
     }
 
@@ -87,7 +82,7 @@ export default class Mylist extends Component {
             <td>{item.expireTime}</td>
             <td>{item.price}</td>
             <td>
-              <button className='btn btn-danger' onClick={ () => this.toggleArchive(item.itemID)}>Archive</button>
+              <button className='btn btn-success' onClick={ () => this.toggleArchive(item.itemID)}>Reactivate</button>
               <button className='btn btn-primary' onClick={ () => window.location.href=`/modify/${item.itemID}`}>Modify</button>
             </td>
           </tr>
