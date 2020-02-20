@@ -7,6 +7,7 @@ namespace MyRental.DTOs.ItemDTOs
 {
     public class ItemDetailDTO
     {
+        public int ItemID { get; set; }
         public string ItemName { get; set; }
         public string Detail { get; set; }
         public string AuthorName { get; set; }
@@ -19,6 +20,7 @@ namespace MyRental.DTOs.ItemDTOs
 
         public ItemDetailDTO(Item item)
         {
+            ItemID = item.ItemID;
             ItemName = item.ItemName;
             Detail = item.Detail;
             Price = item.Price;

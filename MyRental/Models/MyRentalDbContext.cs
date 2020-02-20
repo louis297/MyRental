@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using IdentityServer4.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.AspNetCore.Identity;
@@ -37,10 +38,11 @@ namespace MyRental.Models
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.ApplyConfiguration(new ItemConfiguration());
-            modelBuilder.ApplyConfiguration(new ItemLikeConfiguration());
-            modelBuilder.ApplyConfiguration(new ItemImageConfiguration());
-            modelBuilder.ApplyConfiguration(new MyRentalMessageConfiguration());
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            //modelBuilder.ApplyConfiguration(new ItemConfiguration());
+            //modelBuilder.ApplyConfiguration(new ItemLikeConfiguration());
+            //modelBuilder.ApplyConfiguration(new ItemImageConfiguration());
+            //modelBuilder.ApplyConfiguration(new MyRentalMessageConfiguration());
 
 
             //modelBuilder.Entity<Item>().HasData(

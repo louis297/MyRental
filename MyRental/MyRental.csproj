@@ -23,6 +23,7 @@
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="3.1.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="$(Frontend)**" />
@@ -30,10 +31,23 @@
     <None Include="$(Frontend)**" Exclude="$(Frontend)node_modules\**" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="Migrations\20200220050320_itemlike_table_init.cs" />
+    <Compile Remove="Migrations\20200220050320_itemlike_table_init.Designer.cs" />
+    <Compile Remove="Migrations\20200220050501_itemlike_table_init.cs" />
+    <Compile Remove="Migrations\20200220050501_itemlike_table_init.Designer.cs" />
+    <Compile Remove="Migrations\20200220051309_itemlike_table_init.cs" />
+    <Compile Remove="Migrations\20200220051309_itemlike_table_init.Designer.cs" />
+    <Compile Remove="Migrations\20200220051611_itemlike_table_init.cs" />
+    <Compile Remove="Migrations\20200220051611_itemlike_table_init.Designer.cs" />
+    <Compile Remove="Migrations\20200220051909_itemlike_ondelete.cs" />
+    <Compile Remove="Migrations\20200220051909_itemlike_ondelete.Designer.cs" />
+    <Compile Remove="Migrations\20200220052010_itemlike_ondelete.cs" />
+    <Compile Remove="Migrations\20200220052010_itemlike_ondelete.Designer.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Folder Include="Properties\" />
-    <Folder Include="Models\ResponseModels\" />
-    <Folder Include="Models\ResponseModels\ItemResponseModels\" />
     <Folder Include="MyRentalExceptions\" />
+    <Folder Include="Services\MessageServices\" />
     <Folder Include="Utils\" />
   </ItemGroup>
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(Frontend)node_modules') ">

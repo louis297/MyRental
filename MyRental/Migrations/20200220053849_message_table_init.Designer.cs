@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyRental.Models;
 
 namespace MyRental.Migrations
 {
     [DbContext(typeof(MyRentalDbContext))]
-    partial class MyRentalDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200220053849_message_table_init")]
+    partial class message_table_init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

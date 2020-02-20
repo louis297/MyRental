@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyRental.Models;
 
 namespace MyRental.Migrations
 {
     [DbContext(typeof(MyRentalDbContext))]
-    partial class MyRentalDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200219085250_manual_fk_items")]
+    partial class manual_fk_items
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -248,6 +250,9 @@ namespace MyRental.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("AuthorID")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -274,6 +279,8 @@ namespace MyRental.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ItemID");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("AuthorID");
 
@@ -309,54 +316,6 @@ namespace MyRental.Migrations
                     b.HasIndex("UserID");
 
                     b.ToTable("itemImages");
-                });
-
-            modelBuilder.Entity("MyRental.Models.ItemModels.ItemLike", b =>
-                {
-                    b.Property<string>("UserID")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("ItemLikedID")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserID", "ItemLikedID");
-
-                    b.HasIndex("ItemLikedID");
-
-                    b.ToTable("itemLikes");
-                });
-
-            modelBuilder.Entity("MyRental.Models.MessageModels.MyRentalMessage", b =>
-                {
-                    b.Property<int>("MessageID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(2000)")
-                        .HasMaxLength(2000);
-
-                    b.Property<string>("ReceiverID")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("SenderID")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("SentTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
-
-                    b.HasKey("MessageID");
-
-                    b.HasIndex("ReceiverID");
-
-                    b.HasIndex("SenderID");
-
-                    b.ToTable("MyProperty");
                 });
 
             modelBuilder.Entity("MyRental.Models.UserModel.ApplicationUser", b =>
@@ -477,6 +436,10 @@ namespace MyRental.Migrations
 
             modelBuilder.Entity("MyRental.Models.ItemModels.Item", b =>
                 {
+                    b.HasOne("MyRental.Models.UserModel.ApplicationUser", null)
+                        .WithMany("Student")
+                        .HasForeignKey("ApplicationUserId");
+
                     b.HasOne("MyRental.Models.UserModel.ApplicationUser", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorID")
@@ -495,34 +458,6 @@ namespace MyRental.Migrations
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("MyRental.Models.ItemModels.ItemLike", b =>
-                {
-                    b.HasOne("MyRental.Models.ItemModels.Item", "ItemLiked")
-                        .WithMany()
-                        .HasForeignKey("ItemLikedID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MyRental.Models.UserModel.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("MyRental.Models.MessageModels.MyRentalMessage", b =>
-                {
-                    b.HasOne("MyRental.Models.UserModel.ApplicationUser", "Receiver")
-                        .WithMany()
-                        .HasForeignKey("ReceiverID")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("MyRental.Models.UserModel.ApplicationUser", "Sender")
-                        .WithMany()
-                        .HasForeignKey("SenderID")
-                        .OnDelete(DeleteBehavior.Restrict);
                 });
 #pragma warning restore 612, 618
         }

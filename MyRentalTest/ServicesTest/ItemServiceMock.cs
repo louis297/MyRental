@@ -52,6 +52,11 @@ namespace MyRental.Tests.ControllerTest
             throw new NotImplementedException();
         }
 
+        public void DeleteItemById(int id, ApplicationUser user)
+        {
+            throw new NotImplementedException();
+        }
+
         public ItemListDTO GetItemDetailById(int id)
         {
             if (id == 1)
@@ -92,12 +97,27 @@ namespace MyRental.Tests.ControllerTest
             return items;
         }
 
+        public IEnumerable<Item> GetItemList(ApplicationUser user = null)
+        {
+            throw new NotImplementedException();
+        }
+
         public IEnumerable<ItemListDTO> GetItemListByAmount(int start, int amount)
         {
             throw new NotImplementedException();
         }
 
+        public IEnumerable<Item> GetItemListByAmount(int start, int amount, ApplicationUser user = null)
+        {
+            throw new NotImplementedException();
+        }
+
         public string ItemArchive(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Item ItemArchive(int id, ApplicationUser user)
         {
             throw new NotImplementedException();
         }
@@ -123,19 +143,6 @@ namespace MyRental.Tests.ControllerTest
             throw new NotImplementedException();
         }
 
-        IEnumerable<Item> IItemService.GetItemList()
-        {
-            throw new NotImplementedException();
-        }
 
-        IEnumerable<Item> IItemService.GetItemListByAmount(int start, int amount)
-        {
-            throw new NotImplementedException();
-        }
-
-        Item IItemService.ItemArchive(int id)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

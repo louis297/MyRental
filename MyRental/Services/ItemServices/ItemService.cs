@@ -24,26 +24,23 @@ namespace MyRental.Services.ItemServices
 
         private IEnumerable<Item> CheckUser(IQueryable<Item> items, ApplicationUser user)
         {
-            if(user == null)
-            {
-                return items;
-            } else
-            {
-                return items.Where(item => item.AuthorID.Equals(user.Id));
-            }
+            return user == null? items : items.Where(item => item.AuthorID.Equals(user.Id));
         }
+
+        // IMPORTANT: this function is ambigous and dangerous when there are too many items
         public IEnumerable<Item> GetItemList(ApplicationUser user = null)
         {
             var rawItems = context.items
-            .Where(item => item.Active);
+                .Include(item => item.Author)
+                .Where(item => item.Active);
             var items = CheckUser(rawItems, user);
             return items;
         }
 
-        public IEnumerable<Item> GetItemListByAmount(int start, int amount, ApplicationUser user=null)
+        public IEnumerable<Item> GetItemListByAmount(int start, int amount, ApplicationUser user=null, bool active = true)
         {
             var rawItems = context.items
-                .Where(item => item.Active)
+                .Where(item => item.Active == active)
                 .Where(i => i.ItemID >= start)
                 .OrderBy(i => i.ItemID);
             var items = CheckUser(rawItems, user)
@@ -63,7 +60,9 @@ namespace MyRental.Services.ItemServices
 
         public Item GetItemDetailById(int id)
         {
-            var items = context.items.Where(i => i.ItemID == id);
+            var items = context.items
+                .Where(i => i.ItemID == id)
+                .Include(item => item.Images);
             return items.Count() > 0 ? items.First() : null;
         }
 
@@ -72,7 +71,7 @@ namespace MyRental.Services.ItemServices
 
         }
 
-        public Item ItemArchive(int id, ApplicationUser user)
+        public Item ItemToggleArchive(int id, ApplicationUser user)
         {
             var item = context.items
                 .Where(i => i.ItemID == id)
@@ -86,7 +85,7 @@ namespace MyRental.Services.ItemServices
             } 
             else
             {
-                item.Active = false;
+                item.Active = !item.Active;
                 context.SaveChanges();
                 return item;
             }
@@ -101,7 +100,8 @@ namespace MyRental.Services.ItemServices
                 Detail = newItem.Detail,
                 Price = newItem.Price,
                 ExpireTime = newItem.ExpireTime,
-                AuthorID = user.Id
+                AuthorID = user.Id,
+                Author = user
             };
             item.Images = new List<ItemImage>();
             foreach(int imageID in newItem.Images)
@@ -144,7 +144,7 @@ namespace MyRental.Services.ItemServices
             {
                 return null;
             }
-            if (!item.AuthorID.Equals(user.Id))
+            if (!item.AuthorID.Equals(userId))
             {
                 throw new UserCheckException();
             }
@@ -170,5 +170,19 @@ namespace MyRental.Services.ItemServices
 
         }
 
+        public bool DeleteImageById(int id, ApplicationUser user)
+        {
+            var userId = user.Id;
+            var image = context.itemImages
+                .Where(i => i.ImageId.Equals(id))
+                .FirstOrDefault();
+            if (image == null)
+                return false;
+            if (!image.UserID.Equals(userId))
+                throw new UserCheckException();
+            context.itemImages.Remove(image);
+            context.SaveChanges();
+            return true;
+        }
     }
 }

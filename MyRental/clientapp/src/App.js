@@ -9,6 +9,7 @@ import AddItem from './components/AddItem'
 import { ApplicationPaths } from './components/api-auth/Constants'
 import ApiAuthorizationRoutes from './components/api-auth/ApiAuthorizationRoutes'
 import AuthorizeRoute from './components/api-auth/AuthorizeRoute'
+import MyArchiveList from './components/MyArchivedList'
 
 export default class App extends Component {
   static displayName = App.name;
@@ -19,7 +20,8 @@ export default class App extends Component {
         
         <Route exact path='/' component={Home} />
         <AuthorizeRoute path='/mylist' component={Mylist} />
-        <Route path='/newitem' component={AddItem} />
+        <AuthorizeRoute path='/myarchivedlist' component={MyArchiveList} />
+        <AuthorizeRoute path='/newitem' component={AddItem} />
         <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
       </Layout> 
     )

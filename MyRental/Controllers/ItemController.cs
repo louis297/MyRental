@@ -16,6 +16,7 @@ using MyRental.Utils;
 
 namespace MyRental.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     public class ItemController : Controller
     {
@@ -31,11 +32,45 @@ namespace MyRental.Controllers
 
         // GET: api/values
         [HttpGet]
+        [AllowAnonymous]
         public IEnumerable<ItemListDTO> Get()
         {
             var items = _service.GetItemList();
-            var DTO = items.Select(item => new ItemListDTO(item));
+            var DTO = items
+                .Select(item => new ItemListDTO(item));
             return DTO;
+        }
+
+        [HttpGet("mylist")]
+        public async Task<IEnumerable<ItemListDTO>> GetMyListAsync([FromQuery]int start = 1, [FromQuery]int amount = 10)
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var items = _service.GetItemListByAmount(start, amount, user);
+            if (items.Count() != 0)
+            {
+                var DTO = items.Select(item => new ItemListDTO(item));
+                return DTO;
+            }
+            else
+            {
+                return new List<ItemListDTO>();
+            }
+        }
+
+        [HttpGet("myarchivedlist")]
+        public async Task<IEnumerable<ItemListDTO>> GetMyArchivedListAsync([FromQuery]int start = 1, [FromQuery]int amount = 10)
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var items = _service.GetItemListByAmount(start, amount, user, false);
+            if (items.Count() != 0)
+            {
+                var DTO = items.Select(item => new ItemListDTO(item));
+                return DTO;
+            }
+            else
+            {
+                return new List<ItemListDTO>();
+            }
         }
 
         // GET api/values/5
@@ -51,6 +86,7 @@ namespace MyRental.Controllers
             return DTO;
         }
 
+        // Toggle Item.Active
         [HttpGet("archive/{id}")]
         public async Task<ItemAddUpdateResponseModel> ArchiveAsync([FromRoute]int id)
         {
@@ -58,7 +94,7 @@ namespace MyRental.Controllers
             try
             {
                 var user = await _userManager.GetUserAsync(HttpContext.User);
-                var item = _service.ItemArchive(id, user);
+                var item = _service.ItemToggleArchive(id, user);
                 if (item == null)
                 {
                     return new ItemAddUpdateResponseModel
@@ -78,6 +114,15 @@ namespace MyRental.Controllers
                     };
                     return DTO;
                 }
+            }
+            catch (UserCheckException)
+            {
+                return new ItemAddUpdateResponseModel
+                {
+                    isSuccess = false,
+                    Message = "No permission",
+                    Item = null
+                };
             }
             catch
             {
@@ -133,6 +178,15 @@ namespace MyRental.Controllers
                 };
                 return DTO;
             }
+            catch (UserCheckException)
+            {
+                return new ItemAddUpdateResponseModel
+                {
+                    isSuccess = false,
+                    Message = "No permission",
+                    Item = null
+                };
+            }
             catch
             {
                 return new ItemAddUpdateResponseModel
@@ -144,7 +198,6 @@ namespace MyRental.Controllers
             }
         }
 
-        [Authorize]
         [HttpPost("uploadimage")]
         // The argument variable name 'body' should be same from the frontend
         // Frontend should use 'FormData' to append ('body', '<content>')
@@ -182,7 +235,6 @@ namespace MyRental.Controllers
                     Message = "Write file failed"
                 };
             }
-            
         }
 
         // PUT api/values/5
@@ -218,7 +270,7 @@ namespace MyRental.Controllers
                 return new ItemAddUpdateResponseModel
                 {
                     isSuccess = false,
-                    Message = "Not allowed user",
+                    Message = "No permission",
                     Item = null
                 };
             }
@@ -230,6 +282,30 @@ namespace MyRental.Controllers
                     Message = "DB error",
                     Item = null
                 };
+            }
+        }
+
+        // Delete image
+        [HttpDelete("deleteimage/{id}")]
+        public async Task<UploadImageResponseModel> DeleteImageAsync([FromRoute]int id)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(HttpContext.User);
+                var result = _service.DeleteImageById(id, user);
+                if (result)
+                {
+                    return new UploadImageResponseModel { isSuccess = true, Message = "" };
+                } else
+                {
+                    return new UploadImageResponseModel { isSuccess = false, Message = "Image not found" };
+                }
+            } catch (UserCheckException)
+            {
+                return new UploadImageResponseModel { isSuccess = false, Message = "No permission" };
+            } catch
+            {
+                return new UploadImageResponseModel { isSuccess = false, Message = "Unknown server error" };
             }
         }
 
