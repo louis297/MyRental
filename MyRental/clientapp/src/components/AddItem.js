@@ -14,7 +14,7 @@ export default class AddItem extends Component {
       price: 0,
       expireTime: '',
       images: [],
-      uploadedFilenames: [],
+      uploadedFileIDAndNames: [],
       uploading: false,
       uploadError: false,
       uploadErrorMsg: '',
@@ -25,6 +25,7 @@ export default class AddItem extends Component {
     this.onClickHandler = this.onClickHandler.bind(this);
     this.onChangeHandler = this.onChangeHandler.bind(this);
     this.imageUploadHandler = this.imageUploadHandler.bind(this);
+    this.imageDeleteHandler = this.imageDeleteHandler.bind(this);
   }
 
   onChangeHandler=event=>{
@@ -37,10 +38,35 @@ export default class AddItem extends Component {
     });
   }
 
+  imageDeleteHandler = async (event, imageID) => {
+    event.persist();
+    event.preventDefault();
+    const token = await authService.getAccessToken();
+    axios({
+      url: `/api/item/deleteimage/${imageID}`,
+      method: 'delete',
+      headers: {
+        'Authorization': `Bearer ${token}`
+        }
+    }).then(response => {
+      if(response.data.isSuccess !== true){
+        console.log(response.data.message)
+      }
+      var fileList = this.state.uploadedFileIDAndNames
+                      .filter((f) => f.id !== imageID);
+      this.setState({uploadedFilenames: fileList});
+    })
+    .catch(response => {
+      var fileList = this.state.uploadedFileIDAndNames
+                      .filter((f) => f.id !== imageID);
+      this.setState({uploadedFilenames: fileList});
+    })
+  }
+
   async imageUploadHandler(event){
     // VERY important, without persist event will be re-use and set to null in async function
     event.persist();
-    if(this.state.uploading){
+    if(this.state.uploading === true){
       alert('Another file is uploading, please wait for a while');
       return;
     }
@@ -61,13 +87,13 @@ export default class AddItem extends Component {
     .then(response => {
       this.setState({uploading: false});
       console.log(response.data);
-      if(response.data.isSuccess === 'true'){
+      if(response.data.isSuccess === true){
         // save image index to state
         var newimages = this.state.images;
         var imageIndex = parseInt(response.data.message);
         newimages.push(imageIndex);
         // save local image filename to state
-        var filenames = this.state.uploadedFilenames;
+        var filenames = this.state.uploadedFileIDAndNames;
         filenames.push({id:imageIndex, filename: event.target.files[0].name});
         this.setState({uploadedFilenames: filenames, images: newimages});
         // clear error message
@@ -85,17 +111,12 @@ export default class AddItem extends Component {
     // VERY important, without persist event will be re-use and set to null in async function
     event.persist();
     event.preventDefault();
-    if(this.state.uploading){
+    if(this.state.uploading === true){
       alert('Image is uploading, please wait for a while');
       return;
     }
     const token = await authService.getAccessToken();
-    // const formData = new FormData();
-    // formData.append('itemName', this.state.itemName);
-    // formData.append('detail', this.state.detail);
-    // formData.append('price', this.state.price);
-    // formData.append('expireTime', this.state.expireTime);
-    // formData.append('images', this.state.itemName);
+
     var data = {
       itemName: this.state.itemName,
       detail: this.state.detail,
@@ -137,10 +158,14 @@ export default class AddItem extends Component {
   }
   render() {
     let filelist = <div></div>;
-    if(this.state.uploadedFilenames !== null && this.state.uploadedFilenames.length != 0){
+    if(this.state.uploadedFileIDAndNames !== null && this.state.uploadedFileIDAndNames.length != 0){
       filelist = <ul>
-        {this.state.uploadedFilenames.map((value, index)=>{
-          return <li key={value.id}>{value.filename}</li>
+        {this.state.uploadedFileIDAndNames.map((value, index)=>{
+          return (
+          <li key={value.id}>
+            {value.filename}
+            <button className="btn btn-sm btn-outline-danger" onClick={(event) => this.imageDeleteHandler(event, value.id)}>Delete</button>
+          </li>)
         })}
       </ul>
     }
@@ -180,7 +205,7 @@ export default class AddItem extends Component {
             <div className="row">
             <div className="form-group col-6">
               <label htmlFor="price">Price:</label>
-              <input key='price' type="number" className="form-control" id="price" name="price" alue={this.state.price} 
+              <input key='price' type="number" className="form-control" id="price" name="price" value={this.state.price} 
                 onChange={this.onChangeHandler} />
             </div>
             <div className="form-group col-6">
@@ -192,7 +217,8 @@ export default class AddItem extends Component {
           </div>
           {submitErrorComponent}
           <input type="submit" className="btn btn-primary" value="Add new item" />
-          <input type="button" id="resetBtn" className="btn btn-outline-danger" value="Clear images" 
+          <input type="button" id="resetBtn" className="btn btn-outline-danger" value="Clear" 
+          // TODO: reset function to clear state
             onClick={()=>{document.getElementById('uploadForm').reset(); }}/>
         </form>
       </div>
