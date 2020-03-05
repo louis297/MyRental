@@ -14,6 +14,7 @@ export default class AddItem extends Component {
       price: 0,
       expireTime: '',
       images: [],
+      // [ id: <int>, filename: <string> ]
       uploadedFileIDAndNames: [],
       uploading: false,
       uploadError: false,

@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
@@ -33,10 +35,8 @@ namespace MyRental
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            CustomSettings.ConnectionString = $"Server=(localdb)\\mssqllocaldb;Database=aspnet-myrental;Trusted_Connection=True;MultipleActiveResultSets=true";
-
             services.AddDbContext<MyRentalDbContext>(options =>
-                options.UseSqlServer(CustomSettings.ConnectionString));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllersWithViews();
             services.AddRazorPages();
             
@@ -48,6 +48,8 @@ namespace MyRental
                 .AddEntityFrameworkStores<MyRentalDbContext>();
 
             services.AddIdentityServer()
+                //.AddSigningCredential(new X509Certificate2(Path.Combine(".", "certs", "IdentityServer4Auth.pfx")))
+                //.AddInMemoryApiResources(MyApiResourceProvider.GetAllResources()) // <- THE NEW LINE 
                 .AddApiAuthorization<ApplicationUser, MyRentalDbContext>();
 
             services.AddAuthentication()
@@ -64,7 +66,7 @@ namespace MyRental
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            SetupDB(env.IsDevelopment());
+            //SetupDB(env.IsDevelopment());
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -103,18 +105,18 @@ namespace MyRental
         }
 
         // Setup Database connection string
-        private void SetupDB(bool isDev)
-        {
-            if (isDev)
-            {
-                CustomSettings.ConnectionString = $"Server=(localdb)\\mssqllocaldb;Database=aspnet-myrental;Trusted_Connection=True;MultipleActiveResultSets=true";
-                    //$"Server={Configuration["DB:dev:server"]};Database={Configuration["DB:dev:database"]};user={Configuration["DB:dev:user"]};password={Configuration["DB:dev:password"]}";
-            }
-            else
-            {
-                //TODO: updata connectionstring for prod env
-                CustomSettings.ConnectionString = $"Server={Configuration["DB:dev:server"]};Database={Configuration["DB:dev:database"]};user={Configuration["DB:dev:user"]};password={Configuration["DB:dev:password"]}";
-            }
-        }
+        //private void SetupDB(bool isDev)
+        //{
+        //    if (isDev)
+        //    {
+        //        CustomSettings.ConnectionString = $"Server=(localdb)\\mssqllocaldb;Database=aspnet-myrental;Trusted_Connection=True;MultipleActiveResultSets=true";
+        //            //$"Server={Configuration["DB:dev:server"]};Database={Configuration["DB:dev:database"]};user={Configuration["DB:dev:user"]};password={Configuration["DB:dev:password"]}";
+        //    }
+        //    else
+        //    {
+        //        //TODO: updata connectionstring for prod env
+        //        CustomSettings.ConnectionString = $"Server={Configuration["DB:dev:server"]};Database={Configuration["DB:dev:database"]};user={Configuration["DB:dev:user"]};password={Configuration["DB:dev:password"]}";
+        //    }
+        //}
     }
 }
