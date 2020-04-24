@@ -48,7 +48,6 @@
   <ItemGroup>
     <Folder Include="Properties\" />
     <Folder Include="MyRentalExceptions\" />
-    <Folder Include="Services\MessageServices\" />
     <Folder Include="Utils\" />
   </ItemGroup>
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(Frontend)node_modules') ">

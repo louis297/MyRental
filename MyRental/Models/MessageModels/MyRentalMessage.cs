@@ -1,4 +1,5 @@
-﻿using MyRental.Models.UserModel;
+﻿using MyRental.Models.ItemModels;
+using MyRental.Models.UserModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -18,7 +19,9 @@ namespace MyRental.Models.MessageModels
         public DateTime SentTime { get; set; }
         public string SenderID { get; set; }
         public string ReceiverID { get; set; }
+        public int ItemID { get; set; }
         public ApplicationUser Sender { get; set; }
         public ApplicationUser Receiver { get; set; }
+        public Item TargetItem { get; set; }
     }
 }

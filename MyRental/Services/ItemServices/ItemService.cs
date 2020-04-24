@@ -62,6 +62,7 @@ namespace MyRental.Services.ItemServices
         {
             var items = context.items
                 .Where(i => i.ItemID == id)
+                .Include(item => item.Author)
                 .Include(item => item.Images);
             return items.Count() > 0 ? items.First() : null;
         }

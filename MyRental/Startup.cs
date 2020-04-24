@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,7 @@ using Microsoft.Extensions.Logging;
 using MyRental.Models;
 using MyRental.Models.UserModel;
 using MyRental.Services.ItemServices;
+using MyRental.Services.MessageServices;
 
 namespace MyRental
 {
@@ -41,6 +43,7 @@ namespace MyRental
             services.AddRazorPages();
             
             services.AddScoped<IItemService, ItemService>();
+            services.AddScoped<IMessageService, MessageService>();
 
             // user individual authentication
             services.AddDefaultIdentity<ApplicationUser>(options => {
@@ -72,8 +75,13 @@ namespace MyRental
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
             }
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
 
-
+            // Comment this line for temporary deployment
+            // This line will for raise an error if no https configured
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();

@@ -11,6 +11,11 @@ autom4te.cache/
 tarballs/
 test-results/
 
+# cert file
+*.cer
+*.pfx
+*.pvk
+
 # Mac bundle stuff
 *.dmg
 *.app

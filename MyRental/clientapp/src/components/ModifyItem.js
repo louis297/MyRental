@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import axios, { put, post } from 'axios'
+import authService from './api-auth/AuthorizeService'
 
 export default class ModifyItem extends Component {
     static displayName = ModifyItem.name;
@@ -6,11 +8,13 @@ export default class ModifyItem extends Component {
     constructor(props) {
       super(props);
       this.state = {
+        itemID: 0,
         itemName: '',
         detail: '',
         price: 0,
         expireTime: '',
         images: [],
+        loading: true,
         uploadedFilenames: [],
         uploading: false,
         uploadError: false,
@@ -25,8 +29,26 @@ export default class ModifyItem extends Component {
     }
 
     // get current item data 
-    componentDidMount(){
+    async componentDidMount(){
+      const token = await authService.getAccessToken();
 
+      axios({
+        url: `/api/item/${this.props.match.params.id}`,
+        headers: {
+        'Authorization': `Bearer ${token}`
+        }
+      })
+      .then(r => {
+        console.log(r.data)
+        this.setState({
+          loading: false, 
+          itemID: r.data.itemID,
+          itemName: r.data.itemName,
+          detail: r.data.detail,
+          price: r.data.price,
+          expireTime: r.data.expireTime
+        })
+      })
     }
   
     onChangeHandler=event=>{
@@ -102,8 +124,8 @@ export default class ModifyItem extends Component {
         // images: [1,]
       };
       axios({
-        url:"/api/item/upload", 
-        method: 'post',
+        url:`/api/item/${this.state.itemID}`, 
+        method: 'put',
         // data: {itemName:'some str', price: '333', expireTime:"2020-02-29T03:04", images:[1,], detail: 'some detail'}, 
         data: data,
         headers: {
@@ -118,21 +140,9 @@ export default class ModifyItem extends Component {
           console.log(response.data.message);
         }
       })
-      // axios({
-      //   url:"/api/item/testupload", 
-      //   method: 'post',
-      //   data: {itemName:'some str', price: 333, expireTime:"2020-02-29T03:04", images:[1,]}, 
-      //   headers: {
-      //     'content-type': 'application/json',
-      //     'Authorization': `Bearer ${token}`
-      //   }
-      // })
-      // .then(response => {
-      //   console.log(response.data.message);
-      //   event.preventDefault();
-      // })
     }
-    render() {
+
+    renderItem = () => {
       let filelist = <div></div>;
       if(this.state.uploadedFilenames !== null && this.state.uploadedFilenames.length != 0){
         filelist = <ul>
@@ -151,7 +161,6 @@ export default class ModifyItem extends Component {
       }
       return (
         <div>
-          <h1>Add New Item</h1>
           <form id='uploadForm' onSubmit={this.onClickHandler}>
             <div className="form-group">
               <label htmlFor="itemName">Item name:</label>
@@ -177,7 +186,7 @@ export default class ModifyItem extends Component {
               <div className="row">
               <div className="form-group col-6">
                 <label htmlFor="price">Price:</label>
-                <input key='price' type="number" className="form-control" id="price" name="price" alue={this.state.price} 
+                <input key='price' type="number" className="form-control" id="price" name="price" value={this.state.price} 
                   onChange={this.onChangeHandler} />
               </div>
               <div className="form-group col-6">
@@ -188,12 +197,23 @@ export default class ModifyItem extends Component {
               </div>
             </div>
             {submitErrorComponent}
-            <input type="submit" className="btn btn-primary" value="Add new item" />
+            <input type="submit" className="btn btn-primary" value="Update item" />
             <input type="button" id="resetBtn" className="btn btn-outline-danger" value="Clear images" 
               onClick={()=>{document.getElementById('uploadForm').reset(); }}/>
           </form>
         </div>
       );
+    }
+    render() {
+      let content = this.state.loading
+      ? <p><em>Loading...</em></p>
+      : this.renderItem()
+    return (
+      <div>
+        <h1 id="tableLabel">Update Item</h1>
+        {content}
+      </div>
+    )
       
     }
 }

@@ -29,6 +29,8 @@ namespace MyRental.DTOs.ItemDTOs
             Active = item.Active;
             AuthorID = item.AuthorID;
             AuthorName = item.Author.UserName;
+
+            Images = new List<ItemImageResponseModel>();
         }
 
         public ItemDetailDTO()

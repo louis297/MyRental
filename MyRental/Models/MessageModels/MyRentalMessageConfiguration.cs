@@ -18,10 +18,20 @@ namespace MyRental.Models.MessageModels
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder
+                .HasOne(m => m.TargetItem)
+                .WithMany()
+                .HasForeignKey(m => m.ItemID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder
                 .HasOne(m => m.Receiver)
                 .WithMany()
                 .HasForeignKey(m => m.ReceiverID)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder
+                .Property(m => m.SentTime)
+                .HasDefaultValueSql("getdate()");
         }
     }
 }

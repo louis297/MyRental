@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import authService from './api-auth/AuthorizeService'
+import SendMessageModal from './SendMessageModal'
 
 export default class ItemList extends Component {
   static displayName = ItemList.name;
@@ -41,7 +42,7 @@ componentDidMount(){
       return (
       <td>
         <button className="btn btn-sm btn-success">Like</button> 
-        <button className="btn btn-sm btn-primary">Contact</button>
+        <SendMessageModal itemID={itemID} receiverID={authorID} />
       </td>
       )
     } else {

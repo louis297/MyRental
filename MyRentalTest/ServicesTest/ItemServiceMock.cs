@@ -47,6 +47,11 @@ namespace MyRental.Tests.ControllerTest
             throw new NotImplementedException();
         }
 
+        public bool DeleteImageById(int id, ApplicationUser user)
+        {
+            throw new NotImplementedException();
+        }
+
         public void DeleteItemById(int id)
         {
             throw new NotImplementedException();
@@ -112,12 +117,22 @@ namespace MyRental.Tests.ControllerTest
             throw new NotImplementedException();
         }
 
+        public IEnumerable<Item> GetItemListByAmount(int start, int amount, ApplicationUser user = null, bool active = true)
+        {
+            throw new NotImplementedException();
+        }
+
         public string ItemArchive(int id)
         {
             throw new NotImplementedException();
         }
 
         public Item ItemArchive(int id, ApplicationUser user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Item ItemToggleArchive(int id, ApplicationUser user)
         {
             throw new NotImplementedException();
         }

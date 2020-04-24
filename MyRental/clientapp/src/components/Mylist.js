@@ -88,7 +88,7 @@ export default class Mylist extends Component {
             <td>{item.price}</td>
             <td>
               <button className='btn btn-danger' onClick={ () => this.toggleArchive(item.itemID)}>Archive</button>
-              <button className='btn btn-primary' onClick={ () => window.location.href=`/modify/${item.itemID}`}>Modify</button>
+              <button className='btn btn-primary' onClick={ () => window.location.href=`/updateitem/${item.itemID}`}>Modify</button>
             </td>
           </tr>
           )}

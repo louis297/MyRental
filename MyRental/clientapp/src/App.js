@@ -6,6 +6,7 @@ import { Layout } from './components/Layout'
 import Home from './components/Home'
 import Mylist from './components/Mylist'
 import AddItem from './components/AddItem'
+import ModifyItem from './components/ModifyItem'
 import { ApplicationPaths } from './components/api-auth/Constants'
 import ApiAuthorizationRoutes from './components/api-auth/ApiAuthorizationRoutes'
 import AuthorizeRoute from './components/api-auth/AuthorizeRoute'
@@ -22,6 +23,7 @@ export default class App extends Component {
         <AuthorizeRoute path='/mylist' component={Mylist} />
         <AuthorizeRoute path='/myarchivedlist' component={MyArchiveList} />
         <AuthorizeRoute path='/newitem' component={AddItem} />
+        <AuthorizeRoute path='/updateitem/:id' component={ModifyItem} />
         <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
       </Layout> 
     )

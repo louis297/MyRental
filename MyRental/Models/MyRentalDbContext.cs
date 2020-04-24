@@ -19,7 +19,7 @@ namespace MyRental.Models
         public DbSet<Item> items { get; set; }
         public DbSet<ItemImage> itemImages { get; set; }
         public DbSet<ItemLike> itemLikes { get; set; }
-        public DbSet<MyRentalMessage> MyProperty { get; set; }
+        public DbSet<MyRentalMessage> messages { get; set; }
 
 
         public MyRentalDbContext(
@@ -28,11 +28,6 @@ namespace MyRental.Models
         {
 
         }
-
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    optionsBuilder.UseMySql(connectionString: CustomSettings.ConnectionString);
-        //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

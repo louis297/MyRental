@@ -10,8 +10,8 @@ using MyRental.Models;
 namespace MyRental.Migrations
 {
     [DbContext(typeof(MyRentalDbContext))]
-    [Migration("20200220053849_message_table_init")]
-    partial class message_table_init
+    [Migration("20200424115132_message_table")]
+    partial class message_table
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -339,6 +339,9 @@ namespace MyRental.Migrations
                         .HasColumnType("nvarchar(2000)")
                         .HasMaxLength(2000);
 
+                    b.Property<int>("ItemID")
+                        .HasColumnType("int");
+
                     b.Property<string>("ReceiverID")
                         .HasColumnType("nvarchar(450)");
 
@@ -346,7 +349,9 @@ namespace MyRental.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("SentTime")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(100)")
@@ -354,11 +359,13 @@ namespace MyRental.Migrations
 
                     b.HasKey("MessageID");
 
+                    b.HasIndex("ItemID");
+
                     b.HasIndex("ReceiverID");
 
                     b.HasIndex("SenderID");
 
-                    b.ToTable("MyProperty");
+                    b.ToTable("messages");
                 });
 
             modelBuilder.Entity("MyRental.Models.UserModel.ApplicationUser", b =>
@@ -516,6 +523,12 @@ namespace MyRental.Migrations
 
             modelBuilder.Entity("MyRental.Models.MessageModels.MyRentalMessage", b =>
                 {
+                    b.HasOne("MyRental.Models.ItemModels.Item", "TargetItem")
+                        .WithMany()
+                        .HasForeignKey("ItemID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("MyRental.Models.UserModel.ApplicationUser", "Receiver")
                         .WithMany()
                         .HasForeignKey("ReceiverID")
