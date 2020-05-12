@@ -9,12 +9,7 @@ namespace MyRental.Models.ResponseModels.MessageResponseModels
 {
     public class MessageListResponseModel: BaseResponseModel
     {
-        //public string Title { get; set; }
-        //public string Content { get; set; }
-        //public string SenderID { get; set; }
-        //public string ReceiverID { get; set; }
-        //public int ItemID { get; set; }
-        //public DateTime SentTime { get; set; }
+
         public IEnumerable<MessageDTO> MessageList { get; set; }
 
         public MessageListResponseModel()
@@ -22,14 +17,5 @@ namespace MyRental.Models.ResponseModels.MessageResponseModels
 
         }
 
-        //public MessageResponseModel(MyRentalMessage message)
-        //{
-        //    Title = message.Title;
-        //    Content = message.Content;
-        //    SenderID = message.SenderID;
-        //    ReceiverID = message.ReceiverID;
-        //    ItemID = message.ItemID;
-        //    SentTime = message.SentTime;
-        //}
     }
 }

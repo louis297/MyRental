@@ -8,7 +8,7 @@ namespace MyRental.Models.ResponseModels.MessageResponseModels
 {
     public class MessageSendResponseModel: BaseResponseModel
     {
-        public MessageDTO MessageContent { get; set; }
+        public MessageCreateDTO MessageContent { get; set; }
 
 
     }

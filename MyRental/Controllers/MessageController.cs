@@ -28,9 +28,9 @@ namespace MyRental.Controllers
             _userManager = userManager;
         }
 
-        [HttpGet]
+        [HttpGet("{ItemID}")]
         [AllowAnonymous]
-        public MessageListResponseModel Get([FromQuery]int ItemID)
+        public MessageListResponseModel Get(int ItemID)
         {
             try
             {
@@ -68,7 +68,7 @@ namespace MyRental.Controllers
                 { 
                     isSuccess=true,
                     Message="",
-                    MessageContent = new MessageDTO(r)
+                    MessageContent = new MessageCreateDTO(r)
                 };
             }
             catch (UserCheckException)

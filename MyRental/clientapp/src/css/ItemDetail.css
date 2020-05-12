@@ -1,0 +1,10 @@
+.MessageItemContainer{
+    border-bottom: 1px;
+    border-color: black;
+}
+
+.MessageContainer{
+    list-style: none; 
+    padding-left: 0;
+    padding-top: 2em;
+}

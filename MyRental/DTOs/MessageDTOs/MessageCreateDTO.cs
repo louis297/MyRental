@@ -6,28 +6,26 @@ using System.Threading.Tasks;
 
 namespace MyRental.DTOs.MessageDTOs
 {
-    public class MessageDTO
+    public class MessageCreateDTO
     {
         public string Title { get; set; }
         public string Content { get; set; }
-        public string Sender { get; set; }
-        public string Receiver { get; set; }
+        public string SenderID { get; set; }
+        public string ReceiverID { get; set; }
         public int ItemID { get; set; }
         public DateTime SentTime { get; set; }
-        public int MessageID { get; set; }
 
-        public MessageDTO(MyRentalMessage message)
+        public MessageCreateDTO(MyRentalMessage message)
         {
             Title = message.Title;
             Content = message.Content;
-            Sender = message.Sender.UserName;
-            Receiver = message.Receiver.UserName;
+            SenderID = message.SenderID;
+            ReceiverID = message.ReceiverID;
             ItemID = message.ItemID;
             SentTime = message.SentTime;
-            MessageID = message.MessageID;
         }
 
-        public MessageDTO()
+        public MessageCreateDTO()
         {
 
         }

@@ -75,15 +75,30 @@ namespace MyRental.Controllers
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public ItemDetailDTO Get(int id)
+        public ItemDetailResponseModel Get(int id)
         {
-            var item = _service.GetItemDetailById(id);
-            var DTO = new ItemDetailDTO(item);
-            foreach(var image in item.Images)
+            try {
+                var item = _service.GetItemDetailById(id);
+                var DTO = new ItemDetailDTO(item);
+                foreach (var image in item.Images)
+                {
+                    DTO.Images.Add(new ItemImageResponseModel(image));
+                }
+                return new ItemDetailResponseModel {
+                    isSuccess = true,
+                    Message = "",
+                    ItemDetail = DTO
+                };
+            } catch
             {
-                DTO.Images.Add(new ItemImageResponseModel(image));
+                return new ItemDetailResponseModel
+                {
+                    isSuccess = false,
+                    Message = "Get item detail failed",
+                    ItemDetail = null
+                };
             }
-            return DTO;
+            
         }
 
         // Toggle Item.Active
